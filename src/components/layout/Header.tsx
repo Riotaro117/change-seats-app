@@ -1,6 +1,10 @@
-import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
+import { ChevronDown, ChevronUp, LogOut } from 'lucide-react';
 
-const Header = () => {
+interface HeaderProps {
+  setViewMode: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Header: React.FC<HeaderProps> = ({ setViewMode }) => {
   return (
     <header className="bg-white border-b border-wood-200 sticky top-0 z-30 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
