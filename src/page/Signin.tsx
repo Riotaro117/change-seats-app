@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import Button from '../components/ui/Button';
+import { authRepository } from '../modules/auth/auth.repository';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const signin = () => {};
+  const signin = async () => {
+    const data = await authRepository.signin(email, password);
+    console.log(data);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
