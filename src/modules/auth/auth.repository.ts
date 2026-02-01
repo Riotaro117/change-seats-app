@@ -12,7 +12,6 @@ export const authRepository = {
         },
       },
     });
-    console.log(data)
     if (data.user == null || error != null) throw new Error(error?.message);
     return {
       ...data.user,
@@ -21,6 +20,17 @@ export const authRepository = {
   },
 
   // ログイン機能
+  async signin(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (data.user == null || error != null) throw new Error(error?.message);
+    return {
+      ...data.user,
+      userName: data.user.user_metadata.name,
+    };
+  },
   // ユーザー情報の取得
   // ログイン、ログアウト、トークン更新などのリアルタイム変化を追従
   // ログアウト機能
