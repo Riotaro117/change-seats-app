@@ -1,15 +1,25 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import Button from "../components/ui/Button";
+import { useState } from 'react';
+import { Link } from 'react-router';
+import Button from '../components/ui/Button';
+import { authRepository } from '../modules/auth/auth.repository';
 
 const Signup = () => {
-  const[name,setName]= useState("")
-  const[email,setEmail]= useState("")
-  const[password,setPassword]= useState("")
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const signup = ()=>{
-
-  }
+  const signup = async () => {
+    try {
+      const data = await authRepository.signup(email, password, name);
+      console.log(data.userName);
+      alert(
+        `${data.userName}先生、登録確認メールを送信しました!メール内のリンクをクリックしてログインして下さい!`,
+      );
+    } catch (error) {
+      console.error('Error input form:', error);
+      alert('入力欄に必須事項を入力して下さい。');
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border-4 border-wood-200 text-center">
