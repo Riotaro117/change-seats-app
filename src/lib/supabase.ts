@@ -3,6 +3,6 @@ import type { Database } from '../../database.types';
 
 // supabaseをブラウザで使用するための新しいクライアントを作成
 export const supabase = createClient<Database>(
-  import.meta.env.SUPABASE_URL,
-  import.meta.env.SUPABASE_API_KEY,
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_API_KEY,
 );
