@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Header from '../components/layout/Header';
 import MainContents from '../components/home/MainContents';
-import SideButton from '../components/ui/SideButton';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const Home = () => {
