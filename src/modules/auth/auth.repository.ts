@@ -1,0 +1,27 @@
+import { supabase } from '../../lib/supabase';
+
+export const authRepository = {
+  // ユーザー作成機能
+  async signup(email: string, password: string, name: string) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+        },
+      },
+    });
+    console.log(data)
+    if (data.user == null || error != null) throw new Error(error?.message);
+    return {
+      ...data.user,
+      userName: data.user.user_metadata.name,
+    };
+  },
+
+  // ログイン機能
+  // ユーザー情報の取得
+  // ログイン、ログアウト、トークン更新などのリアルタイム変化を追従
+  // ログアウト機能
+};
