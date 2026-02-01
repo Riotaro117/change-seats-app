@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 
@@ -7,14 +7,15 @@ const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const signup = async () => {
     try {
       const data = await authRepository.signup(email, password, name);
-      console.log(data.userName);
       alert(
         `${data.userName}先生、登録確認メールを送信しました!メール内のリンクをクリックしてログインして下さい!`,
       );
+      navigate('/signin', { replace: true });
     } catch (error) {
       console.error('Error input form:', error);
       alert('入力欄に必須事項を入力して下さい。');
