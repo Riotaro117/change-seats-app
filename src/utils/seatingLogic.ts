@@ -191,7 +191,7 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     const score = hardConflicts * 1000 + genderConflicts;
     // スコアが存在するなら
     if (score < minScore) {
-      // 現在のスコアを最小のスコアにする
+      // 現在のスコアを最小のスコアにして考える
       minScore = score
       // 現在の座席配置をベスト配置にコピーする
       bestAssignments = [...assignments];
