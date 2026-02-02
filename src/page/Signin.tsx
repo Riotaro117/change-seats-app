@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
+import { useCurrentUserStore } from '../modules/auth/current-user.state';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { currentUser, setUser } = useCurrentUserStore();
 
   const signin = async () => {
     const data = await authRepository.signin(email, password);
-    console.log(data);
+    setUser(data);
   };
+  // ログイン済みのユーザーの処理
+  if (currentUser != null) return <Navigate replace to="/" />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
