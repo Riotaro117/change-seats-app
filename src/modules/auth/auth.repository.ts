@@ -1,3 +1,4 @@
+import type { User } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase';
 
 export const authRepository = {
@@ -41,5 +42,13 @@ export const authRepository = {
     };
   },
   // ログイン、ログアウト、トークン更新などのリアルタイム変化を追従
+  stateChange(onChange: (user: User | null) => void) {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      onChange(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  },
   // ログアウト機能
 };
