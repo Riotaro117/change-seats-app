@@ -5,5 +5,5 @@ const currentUserAtom = atom<User>();
 
 export const useCurrentUserStore = () => {
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-  return { currentUser, set: setCurrentUser };
+  return { currentUser, setUser: setCurrentUser };
 };
