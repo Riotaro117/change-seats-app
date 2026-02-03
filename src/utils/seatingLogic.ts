@@ -189,7 +189,7 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     const genderConflicts = countGenderConflicts(assignments, studentMap, rows, cols);
     // 厳しい制約には1000倍の採点をする
     const score = hardConflicts * 1000 + genderConflicts;
-    // スコアが存在するなら
+    // 最小のスコアより良いスコアかどうか
     if (score < minScore) {
       // 現在のスコアを最小のスコアにして考える
       minScore = score

@@ -2,15 +2,35 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, ImageIcon, LogOut, Save, Shuffle, Users } from 'lucide-react';
 import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
-import type { ViewMode } from '../type';
+import type { Seat, ViewMode } from '../type';
 
 const Home = () => {
   // 画面表示の切り替え
   const [viewMode, setViewMode] = useState<ViewMode>('classroom');
+  // 総座席数
   const [totalSeats, setTotalSeats] = useState(30);
+  // 座席の状態
+  const [seats, setSeats] = useState<Seat[]>([]); // 初期値に[]忘れがち
+  // 教室の列
+  const [cols, setCols] = useState(6);
   const { setUser } = useCurrentUserStore();
 
-  const handleResize = () => {};
+  // 総座席数が変わったときに教室の座席配置を作り直す関数
+  const handleResize = (size: number) => {
+    // 総座席数の更新
+    setTotalSeats(size);
+    // 引数のsizeを元に新しい座席データを作成する
+    // 引数のsizeを配列のようなオブジェクトlength:sizeとして配列にしている
+    // 使わないvalueは_で示している elementはundefinedなので存在しない
+    const newSeats: Seat[] = Array.from({ length: size }, (_, i) => ({
+      id: `seat-${Math.floor(i / cols)}-${i % cols}`,
+      row: Math.floor(i / cols),
+      col: i % cols,
+      studentId: null, // 初めは誰も座っていない
+    }));
+    // 座席情報の更新
+    setSeats(newSeats);
+  };
   const signout = async () => {
     await authRepository.signout();
     setUser(undefined);
@@ -31,14 +51,14 @@ const Home = () => {
             <div className="hidden md:flex items-center gap-2 mr-4 bg-wood-50 px-3 py-1 rounded-lg border border-wood-100">
               <span className="text-sm font-bold text-wood-600">座席数:</span>
               <button
-                // onClick={() => handleResize(Math.max(20, totalSeats - 1))}
+                onClick={() => handleResize(Math.max(20, totalSeats - 1))}
                 className="p-1 hover:bg-wood-200 rounded"
               >
                 <ChevronDown className="w-4 h-4" />
               </button>
-              {/* <span className="w-8 text-center font-mono">{totalSeats}</span> */}
+              <span className="w-8 text-center font-mono">{totalSeats}</span>
               <button
-                // onClick={() => handleResize(Math.min(40, totalSeats + 1))}
+                onClick={() => handleResize(Math.min(40, totalSeats + 1))}
                 className="p-1 hover:bg-wood-200 rounded"
               >
                 <ChevronUp className="w-4 h-4" />
@@ -109,19 +129,20 @@ const Home = () => {
             保存
           </button>
         </div>
+        
       </main>
+      {/* サイドボタン */}
       <div className="fixed bottom-6 right-6 md:hidden">
         <div className="bg-white p-2 rounded-full shadow-xl border-2 border-wood-200 flex flex-col gap-2">
           <button
-            // onClick={() => handleResize(Math.min(40, totalSeats + 1))}
+            onClick={() => handleResize(Math.min(40, totalSeats + 1))}
             className="p-2 bg-wood-100 rounded-full hover:bg-wood-200"
           >
             <ChevronUp />
           </button>
           <span className="text-center font-bold text-xs">{totalSeats}</span>
-          {/* <span className="text-center font-bold text-xs">{30}</span> */}
           <button
-            // onClick={() => handleResize(Math.max(20, totalSeats - 1))}
+            onClick={() => handleResize(Math.max(20, totalSeats - 1))}
             className="p-2 bg-wood-100 rounded-full hover:bg-wood-200"
           >
             <ChevronDown />
