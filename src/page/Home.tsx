@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   ArrowRightLeft,
@@ -33,6 +33,8 @@ const Home = () => {
   // 生徒に高速アクセスするために、mapの作成
   const studentMap = new Map<string, Student>(students?.map((student) => [student.id, student]));
 
+
+  
   // 総座席数が変わったときに教室の座席配置を作り直す関数
   const handleResize = (size: number) => {
     // 総座席数の更新
@@ -53,6 +55,10 @@ const Home = () => {
     await authRepository.signout();
     setUser(undefined);
   };
+
+  useEffect(()=>{
+    handleResize(30)
+  },[])
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
       <header className="bg-white border-b border-wood-200 sticky top-0 z-30 shadow-sm">
@@ -165,20 +171,28 @@ const Home = () => {
               // 生徒を定義
               const student = seat.studentId ? studentMap.get(seat.studentId) : null;
               // 選択している座席のidとseatのidが一致している状態を定義
-              const isSelected = isSelectedSeatId === seat.studentId;
-              // 制約違反があるかどうか状態を定義
-              const hasConflict = 
+              const isSelected = isSelectedSeatId === seat.id;
+              // seatingLogicを元に制約違反があるかどうか
+              // const hasConflict = getConflict
 
               // 文字の色を定義
+              let textColor = 'text-wood-900';
               // 生徒が存在するかどうかで文字の色を変化させる
-              // 制約違反があるなら赤色で警告
-              // 制約違反がなければ、男女で色を変化させる
+              if (student) {
+                // 制約違反があるなら赤色で警告
+                // 制約違反がなければ、男女で色を変化させる
+                if (student.gender === 'boy') {
+                  textColor = 'text-blue-900';
+                } else if (student.gender === 'girl') {
+                  textColor = 'text-pink-900';
+                }
+              }
 
               // 出力する
               return (
                 <div
                   key={seat.id}
-                  onClick={() => handleSeatClick(seat.id)}
+                  // onClick={() => handleSeatClick(seat.id)}
                   className={`
                 relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-2 cursor-pointer
                 transition-all duration-300 transform border-b-4
@@ -189,17 +203,15 @@ const Home = () => {
                     : 'hover:-translate-y-1 hover:shadow-lg'
                 }
                 ${
-                  // 生徒が存在しない時のスタイル、制約違反があったらスタイルを変える
+                  // 生徒が存在しない時のスタイル、制約違反があったらスタイルを変える(後で)！！！！！
                   !student
                     ? 'bg-wood-100 border-wood-200 border-dashed'
-                    : hasConflict
-                      ? 'bg-red-50 border-red-300'
-                      : 'bg-orange-200 border-wood-400'
+                    : 'bg-orange-200 border-wood-400'
                 }
               `}
                 >
-                  {/* 生徒がいて、制約違反もなく、選択もされていないなら */}
-                  {student && !hasConflict && !isSelected && (
+                  {/* 生徒がいて、（後で）！！！！！制約違反もなく、選択もされていないなら */}
+                  {student && !isSelected && (
                     <div className="absolute inset-2 border border-orange-300/50 rounded-lg pointer-events-none"></div>
                   )}
 
@@ -208,15 +220,8 @@ const Home = () => {
                     <>
                       <div className="flex items-center gap-1 mb-1">
                         {/* 前列配慮のある生徒の場合のスタイル */}
-                        {student.needsFrontRow && (
-                          <Glasses
-                            className={`w-3 h-3 ${hasConflict ? 'text-red-500' : 'text-wood-700'}`}
-                          />
-                        )}
+                        {student.needsFrontRow && <Glasses className={`w-3 h-3`} />}
                         {/* もし制約違反があったら */}
-                        {hasConflict && (
-                          <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
-                        )}
                       </div>
                       {/* 生徒の名前を表示する */}
                       <span
