@@ -91,17 +91,24 @@ const Home = () => {
   // 席替えをする
   const handleRandomize = () => {
     // rowsを定義する
-    const rows = totalSeats / cols;
+    const rows = Math.ceil(totalSeats / cols);
     // 新しい座席を制約を元にして定義する
     if (students) {
       const newSeats = generateSeatingChart(rows, cols, students);
       // 総座席数より、生徒が座っている座席が少ない場合
-      if(newSeats.length < totalSeats){
-        // 不足している座席分を「空席オブジェクト」で補完している
-
+      if (newSeats.length < totalSeats) {
+        // 生徒が座っていない座席に繰り返し処理でseatのstudentIdにnullを入れていく
+        for (let i = newSeats.length; i < totalSeats; i++) {
+          newSeats.push({
+            id: `seat-${i / cols}-${i % cols}`,
+            row: i / cols,
+            col: i % cols,
+            studentId: null,
+          });
+        }
       }
-
       // 座席を更新する
+      setSeats(newSeats);
     }
   };
 
@@ -166,7 +173,7 @@ const Home = () => {
             >
               席替え実行
             </Button> */}
-          <button className="shadow-md">
+          <button className="shadow-md" onClick={handleRandomize}>
             <Shuffle className="w-5 h-5" />
             席替え実行
           </button>
