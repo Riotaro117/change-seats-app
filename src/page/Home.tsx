@@ -16,6 +16,7 @@ import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 import type { Seat, Student, ViewMode } from '../type';
 import { useStudentsStore } from '../modules/students/students.state';
+import { generateSeatingChart } from '../utils/seatingLogic';
 
 const Home = () => {
   // 画面表示の切り替え
@@ -33,8 +34,10 @@ const Home = () => {
   // 生徒に高速アクセスするために、mapの作成
   const studentMap = new Map<string, Student>(students?.map((student) => [student.id, student]));
 
+  useEffect(() => {
+    handleResize(30);
+  }, []);
 
-  
   // 総座席数が変わったときに教室の座席配置を作り直す関数
   const handleResize = (size: number) => {
     // 総座席数の更新
@@ -51,14 +54,62 @@ const Home = () => {
     // 座席情報の更新
     setSeats(newSeats);
   };
+
+  // 指定した生徒同士の座席を入れ替える
+  const handleSwap = (id1: string, id2: string) => {
+    // 元の座席順をコピーして入れ替える準備をする
+    const newSeats = [...seats];
+    // コピーした配列の中からid1とid2に一致するインデックスをそれぞれ取得する
+    let seat1Idx = newSeats.findIndex((s) => s.id === id1);
+    let seat2Idx = newSeats.findIndex((s) => s.id === id2);
+    // 見つからなかったらそのまま返す
+    if (seat1Idx === -1 || seat2Idx === -1) return;
+    // 生徒のidを交換する処理
+    // 一時的にid1を格納する
+    const temp = seat1Idx;
+    // id2をid1に格納
+    seat1Idx = seat2Idx;
+    // tempをid2に格納
+    seat2Idx = temp;
+  };
+
+  // 座席をクリックしたら選択済みにする
+  const handleSeatClick = (seatId: string) => {
+    // 選択済みの座席がない場合
+    if (!isSelectedSeatId) {
+      setIsSelectedSeatId(seatId);
+    } else {
+      // 選択済みがある場合、選んでいない座席なら入れ替え
+      if (isSelectedSeatId !== seatId) {
+        handleSwap(isSelectedSeatId, seatId);
+      }
+      // 既に選択済みなら外す
+      setIsSelectedSeatId(null);
+    }
+  };
+
+  // 席替えをする
+  const handleRandomize = () => {
+    // rowsを定義する
+    const rows = totalSeats / cols;
+    // 新しい座席を制約を元にして定義する
+    if (students) {
+      const newSeats = generateSeatingChart(rows, cols, students);
+      // 総座席数より、生徒が座っている座席が少ない場合
+      if(newSeats.length < totalSeats){
+        // 不足している座席分を「空席オブジェクト」で補完している
+
+      }
+
+      // 座席を更新する
+    }
+  };
+
   const signout = async () => {
     await authRepository.signout();
     setUser(undefined);
   };
 
-  useEffect(()=>{
-    handleResize(30)
-  },[])
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
       <header className="bg-white border-b border-wood-200 sticky top-0 z-30 shadow-sm">
@@ -192,7 +243,7 @@ const Home = () => {
               return (
                 <div
                   key={seat.id}
-                  // onClick={() => handleSeatClick(seat.id)}
+                  onClick={() => handleSeatClick(seat.id)}
                   className={`
                 relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-2 cursor-pointer
                 transition-all duration-300 transform border-b-4
