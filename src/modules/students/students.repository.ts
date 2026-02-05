@@ -29,12 +29,12 @@ export const studentsRepository = {
 
     return formattedStudents;
   },
-  // 生徒の追加
+  // 生徒の追加 idについてはDBが自動作成するものなので省略している
   async addStudent(userId: string, student: Omit<Student, 'id'>) {
     const { data, error } = await supabase
       .from('students')
       .insert({
-        user_id: userId,
+        user_id: userId, // 作成者のid
         name: student.name,
         gender: student.gender,
         needsFrontRow: student.needsFrontRow,
