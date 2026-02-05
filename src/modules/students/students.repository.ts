@@ -46,8 +46,8 @@ export const studentsRepository = {
     return data;
   },
   // 生徒の更新
-  async updateStudent(student: Student) {
-    const { error } = await supabase
+  async updateStudent(student: Student, userId: string) {
+    const { data, error } = await supabase
       .from('students')
       .update({
         name: student.name,
@@ -55,8 +55,23 @@ export const studentsRepository = {
         needsFrontRow: student.needsFrontRow,
         badChemistryWith: student.badChemistryWith,
       })
-      .eq('id', student.id);
-    if (error != null) throw new Error(error.message);
+      .eq('id', student.id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    if (data == null || error != null) throw new Error(error.message);
+    return data;
   },
   // 生徒の削除
+  async deleteStudent(student: Student, userId: string) {
+    const { data, error } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', student.id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    if (data == null || error != null) throw new Error(error.message);
+    return data;
+  },
 };
