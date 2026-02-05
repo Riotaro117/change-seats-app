@@ -30,6 +30,21 @@ export const studentsRepository = {
     return formattedStudents;
   },
   // 生徒の追加
+  async addStudent(userId: string, student: Omit<Student, 'id'>) {
+    const { data, error } = await supabase
+      .from('students')
+      .insert({
+        user_id: userId,
+        name: student.name,
+        gender: student.gender,
+        needsFrontRow: student.needsFrontRow,
+        badChemistryWith: student.badChemistryWith,
+      })
+      .select()
+      .single();
+    if (data == null || error != null) throw new Error(error.message);
+    return data;
+  },
   // 生徒の更新
   // 生徒の削除
 };
