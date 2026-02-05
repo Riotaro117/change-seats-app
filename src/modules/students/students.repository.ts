@@ -46,5 +46,17 @@ export const studentsRepository = {
     return data;
   },
   // 生徒の更新
+  async updateStudent(student: Student) {
+    const { error } = await supabase
+      .from('students')
+      .update({
+        name: student.name,
+        gender: student.gender,
+        needsFrontRow: student.needsFrontRow,
+        badChemistryWith: student.badChemistryWith,
+      })
+      .eq('id', student.id);
+    if (error != null) throw new Error(error.message);
+  },
   // 生徒の削除
 };
