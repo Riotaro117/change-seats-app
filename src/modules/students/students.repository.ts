@@ -8,7 +8,7 @@ export const studentsRepository = {
       .from('students')
       .select('*')
       .eq('user_id', userId)
-      .order('create_at', { ascending: true });
+      .order('create_at', { ascending: true }); // 作成順で並び替え→名前順の方がいい？
     if (data == null || error != null) throw new Error(error.message);
 
     // genderがどの性別かチェックする関数を作成する
@@ -16,7 +16,7 @@ export const studentsRepository = {
       value === 'boy' || value === 'girl' || value === 'other';
 
     // DBの項目のsnake_case→appの項目のcamelcaseへ変換
-    const formattedStudents: Student[] = data.map((s) => ({
+    const formattedStudents: Student[] = (data || []).map((s) => ({
       id: s.id,
       name: s.name,
       gender: isGender(s.gender) ? s.gender : 'other',
