@@ -1,3 +1,4 @@
+import { PassThrough } from 'stream';
 import { supabase } from '../../lib/supabase';
 import type { ClassroomLayout, Seat, Student } from '../../type';
 
@@ -20,7 +21,7 @@ export const layoutsRepository = {
     return formattedLayouts;
   },
   // 座席を保存する
-  async createLayouts(userId: string, layout: Omit<ClassroomLayout, 'id'>) {
+  async createLayout(userId: string, layout: Omit<ClassroomLayout, 'id'>) {
     const { data, error } = await supabase
       .from('layouts')
       .insert({
@@ -38,4 +39,12 @@ export const layoutsRepository = {
     return data;
   },
   // 座席を削除する
+  async deleteLayout(userId: string, layout: ClassroomLayout) {
+    const { error } = await supabase
+      .from('layouts')
+      .delete()
+      .eq('user_id', userId)
+      .eq('id', layout.id);
+    if (error != null) throw new Error(error.message);
+  },
 };
