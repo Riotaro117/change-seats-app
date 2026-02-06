@@ -20,5 +20,22 @@ export const layoutsRepository = {
     return formattedLayouts;
   },
   // 座席を保存する
+  async createLayouts(userId: string, layout: Omit<ClassroomLayout, 'id'>) {
+    const { data, error } = await supabase
+      .from('layouts')
+      .insert({
+        user_id: userId, // 作成者
+        name: layout.name,
+        date: new Date().toLocaleDateString(),
+        rows: layout.rows,
+        cols: layout.cols,
+        seats: layout.seats,
+        students: layout.students,
+      })
+      .select()
+      .single();
+    if (data == null || error != null) throw new Error(error.message);
+    return data;
+  },
   // 座席を削除する
 };
