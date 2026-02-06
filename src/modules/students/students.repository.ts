@@ -8,7 +8,7 @@ export const studentsRepository = {
       .from('students')
       .select('*')
       .eq('user_id', userId)
-      .order('create_at', { ascending: true }); // 作成順で並び替え→名前順の方がいい？
+      .order('created_at', { ascending: true }); // 作成順で並び替え→名前順の方がいい？
     if (data == null || error != null) throw new Error(error.message);
 
     // genderがどの性別かチェックする関数を作成する

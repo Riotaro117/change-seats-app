@@ -1,4 +1,3 @@
-import { PassThrough } from 'stream';
 import { supabase } from '../../lib/supabase';
 import type { ClassroomLayout, Seat, Student } from '../../type';
 
