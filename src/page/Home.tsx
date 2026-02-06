@@ -47,7 +47,6 @@ const Home = () => {
   useEffect(() => {
     if (!isLoading) {
       fetchData();
-      console.log(seats);
     }
   }, []);
 
@@ -71,7 +70,9 @@ const Home = () => {
       alert('データの読み込みに失敗しました');
     } finally {
       // 最後の締め
-      handleResize(30);
+      if (seats.length === 0) {
+        handleResize(30);
+      }
       setIsLoadingData(false);
     }
   };
@@ -136,6 +137,7 @@ const Home = () => {
     const student = studentMap.get(seat.studentId);
     // 生徒がいないならfalseで終了
     if (!student) return false;
+
     // 1.相性が悪いチェック
     // for-ofで上下左右一つずつループさせて確かめる
     for (const offset of ADJACENT_OFFSETS) {
@@ -150,13 +152,18 @@ const Home = () => {
         if (student.badChemistryWith.includes(neighborSeat.studentId)) return true;
         // 隣の生徒を定義し、反対も同様に二重チェックする→片思いの苦手でもNGにする
         const neighborStudent = studentMap.get(neighborSeat.studentId);
-        if (neighborStudent && neighborStudent.badChemistryWith.includes(seat.studentId))
-          return true;
+        if (neighborStudent && neighborStudent.badChemistryWith.includes(student.id)) return true;
       }
     }
 
     // 2. 視力が悪い人のチェック
     if (student.needsFrontRow && seat.row > 1) return true;
+
+    console.log({
+      seatRow: seat.row,
+      needsFrontRow: student.needsFrontRow,
+      result: student.needsFrontRow && seat.row > 1,
+    });
 
     // 何も違反がない場合はfalse
     return false;
@@ -174,8 +181,8 @@ const Home = () => {
         // 生徒が座っていない座席に繰り返し処理でseatのstudentIdにnullを入れていく
         for (let i = newSeats.length; i < totalSeats; i++) {
           newSeats.push({
-            id: `seat-${i / cols}-${i % cols}`,
-            row: i / cols,
+            id: `seat-${Math.floor(i / cols)}-${i % cols}`,
+            row: Math.floor(i / cols),
             col: i % cols,
             studentId: null,
           });
@@ -285,11 +292,8 @@ const Home = () => {
                 // 制約違反があるなら赤色で警告
                 if (hasConflict) textColor = 'text-red-700';
                 // 制約違反がなければ、男女で色を変化させる
-                else if (student.gender === 'boy') {
-                  textColor = 'text-blue-900';
-                } else if (student.gender === 'girl') {
-                  textColor = 'text-pink-900';
-                }
+                else if (student.gender === 'boy') textColor = 'text-blue-900';
+                else if (student.gender === 'girl') textColor = 'text-pink-900';
               }
 
               // 出力する
@@ -310,12 +314,14 @@ const Home = () => {
                   // 生徒が存在しない時のスタイル、制約違反があったらスタイルを変える(後で)！！！！！
                   !student
                     ? 'bg-wood-100 border-wood-200 border-dashed'
-                    : 'bg-orange-200 border-wood-400'
+                    : hasConflict
+                      ? 'bg-red-50 border-red-300'
+                      : 'bg-orange-200 border-wood-400'
                 }
               `}
                 >
-                  {/* 生徒がいて、（後で）！！！！！制約違反もなく、選択もされていないなら */}
-                  {student && !isSelected && (
+                  {/* 生徒がいて制約違反もなく、選択もされていないなら */}
+                  {student && !isSelected && !hasConflict && (
                     <div className="absolute inset-2 border border-orange-300/50 rounded-lg pointer-events-none"></div>
                   )}
 
@@ -324,8 +330,15 @@ const Home = () => {
                     <>
                       <div className="flex items-center gap-1 mb-1">
                         {/* 前列配慮のある生徒の場合のスタイル */}
-                        {student.needsFrontRow && <Glasses className={`w-3 h-3`} />}
+                        {student.needsFrontRow && (
+                          <Glasses
+                            className={`w-3 h-3 ${hasConflict ? 'text-red-500' : 'text-wood-700'}`}
+                          />
+                        )}
                         {/* もし制約違反があったら */}
+                        {hasConflict && (
+                          <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
+                        )}
                       </div>
                       {/* 生徒の名前を表示する */}
                       <span
@@ -334,10 +347,10 @@ const Home = () => {
                       >
                         {student.name}
                       </span>
-
-                      {/* <div className="mt-2 opacity-0 hover:opacity-100 absolute inset-0 bg-black/5 rounded-xl flex items-center justify-center transition-opacity">
+                      {/* ホバーした時だけ入れ替えマークが出現 */}
+                      <div className="mt-2 opacity-0 hover:opacity-100 absolute inset-0 bg-black/5 rounded-xl flex items-center justify-center transition-opacity">
                         <ArrowRightLeft className="text-wood-800 w-6 h-6" />
-                      </div> */}
+                      </div>
                     </>
                   ) : (
                     <span className="text-wood-300 text-xs font-medium">空席</span>
