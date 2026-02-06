@@ -17,6 +17,10 @@ import { useCurrentUserStore } from '../modules/auth/current-user.state';
 import type { Seat, Student, ViewMode } from '../type';
 import { useStudentsStore } from '../modules/students/students.state';
 import { generateSeatingChart } from '../utils/seatingLogic';
+import { useAuth } from '../contexts/useAuth';
+import { studentsRepository } from '../modules/students/students.repository';
+import { layoutsRepository } from '../modules/layouts/layouts.repository';
+import { useLayoutsStore } from '../modules/layouts/layouts.state';
 
 const Home = () => {
   // 画面表示の切り替え
@@ -27,16 +31,49 @@ const Home = () => {
   const [seats, setSeats] = useState<Seat[]>([]); // 初期値に[]忘れがち
   // 教室の列
   const [cols, setCols] = useState(6);
-  const { setUser } = useCurrentUserStore();
-  const { students } = useStudentsStore();
+  // supabaseとの通信状態
+  const [isLoadingData, setIsLoadingData] = useState(false);
+
+  const { isLoading } = useAuth();
+  const { currentUser, setUser } = useCurrentUserStore();
+  const { students, setStudents } = useStudentsStore();
+  const { layouts, setLayouts } = useLayoutsStore();
   // 現在選択している座席のid
   const [isSelectedSeatId, setIsSelectedSeatId] = useState<string | null>(null);
   // 生徒に高速アクセスするために、mapの作成
   const studentMap = new Map<string, Student>(students?.map((student) => [student.id, student]));
 
   useEffect(() => {
-    handleResize(30);
+    if (!isLoading) {
+      fetchData();
+      console.log(seats);
+    }
   }, []);
+
+  // supabaseのデータ取得
+  const fetchData = async () => {
+    // データ取得中
+    setIsLoadingData(true);
+    // 成功した時
+    try {
+      // 生徒情報を取得
+      const formattedStudents = await studentsRepository.fetchStudents(currentUser!.id);
+      // 取得した生徒情報をグローバルステートに格納
+      setStudents(formattedStudents);
+      // 教室のレイアウトを取得
+      const formattedLayouts = await layoutsRepository.fetchLayouts(currentUser!.id);
+      // 教室のレイアウトをグローバルステートに格納
+      setLayouts(formattedLayouts);
+    } catch (error) {
+      // 失敗した時
+      console.error('Error fetching data:', error);
+      alert('データの読み込みに失敗しました');
+    } finally {
+      // 最後の締め
+      handleResize(30);
+      setIsLoadingData(false);
+    }
+  };
 
   // 総座席数が変わったときに教室の座席配置を作り直す関数
   const handleResize = (size: number) => {
@@ -150,7 +187,9 @@ const Home = () => {
             {/* <Button variant="ghost" onClick={signout} className="hidden sm:inline-flex">
               ログアウト
             </Button> */}
-            <button className="hidden sm:inline-flex">ログアウト</button>
+            <button className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none hidden sm:inline-flex">
+              ログアウト
+            </button>
             {/* <Button
               variant="ghost"
               className="sm:hidden"
@@ -158,7 +197,10 @@ const Home = () => {
               onClick={signout}
             ></Button> */}
             {/* レスポンシブで表示切り替え */}
-            <button className="sm:hidden" onClick={signout}>
+            <button
+              className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none sm:hidden"
+              onClick={signout}
+            >
               <LogOut className="w-5 h-5" />
             </button>
           </div>
@@ -166,47 +208,22 @@ const Home = () => {
       </header>
       <main className="max-w-7xl mx-auto px-4 pt-6">
         <div className="flex flex-wrap gap-4 justify-center mb-8 sticky top-20 z-20 py-2 bg-wood-50/90 backdrop-blur-sm rounded-xl">
-          {/* <Button
-              onClick={handleRandomize}
-              icon={<Shuffle className="w-5 h-5" />}
-              className="shadow-md"
-            >
-              席替え実行
-            </Button> */}
-          <button className="shadow-md" onClick={handleRandomize}>
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20 shadow-md"
+            onClick={handleRandomize}
+          >
             <Shuffle className="w-5 h-5" />
             席替え実行
           </button>
-          {/* <Button
-              variant="secondary"
-              onClick={() => setViewMode('students')}
-              icon={<Users className="w-5 h-5" />}
-            >
-              名簿・条件
-            </Button> */}
-          <button>
+          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
             <Users className="w-5 h-5" />
             名簿・条件
           </button>
-          {/* <Button
-              variant="secondary"
-              onClick={() => setViewMode('history')}
-              icon={<ImageIcon className="w-5 h-5" />}
-            >
-              アルバム
-            </Button> */}
-          <button>
+          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
             <ImageIcon className="w-5 h-5" />
             アルバム
           </button>
-          {/* <Button
-              variant="secondary"
-              onClick={saveCurrentLayout}
-              icon={<Save className="w-5 h-5" />}
-            >
-              保存
-            </Button> */}
-          <button>
+          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
             <Save className="w-5 h-5" />
             保存
           </button>
