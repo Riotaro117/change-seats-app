@@ -96,18 +96,20 @@ const Home = () => {
   const handleSwap = (id1: string, id2: string) => {
     // 元の座席順をコピーして入れ替える準備をする
     const newSeats = [...seats];
-    // コピーした配列の中からid1とid2に一致するインデックスをそれぞれ取得する
-    let seat1Idx = newSeats.findIndex((s) => s.id === id1);
-    let seat2Idx = newSeats.findIndex((s) => s.id === id2);
+    // コピーした配列の中から選択しているid1とid2に一致するインデックスをそれぞれ取得する
+    const seat1Idx = newSeats.findIndex((s) => s.id === id1);
+    const seat2Idx = newSeats.findIndex((s) => s.id === id2);
     // 見つからなかったらそのまま返す
     if (seat1Idx === -1 || seat2Idx === -1) return;
     // 生徒のidを交換する処理
     // 一時的にid1を格納する
-    const temp = seat1Idx;
+    const temp = newSeats[seat1Idx].studentId;
     // id2をid1に格納
-    seat1Idx = seat2Idx;
+    newSeats[seat1Idx].studentId = newSeats[seat2Idx].studentId;
     // tempをid2に格納
-    seat2Idx = temp;
+    newSeats[seat2Idx].studentId = temp;
+    // 現在の座席を更新
+    setSeats(newSeats);
   };
 
   // 座席をクリックしたら選択済みにする
@@ -124,6 +126,10 @@ const Home = () => {
       setIsSelectedSeatId(null);
     }
   };
+
+  // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
+
+  // 
 
   // 席替えをする
   const handleRandomize = () => {
@@ -184,18 +190,9 @@ const Home = () => {
               </button>
             </div>
 
-            {/* <Button variant="ghost" onClick={signout} className="hidden sm:inline-flex">
-              ログアウト
-            </Button> */}
             <button className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none hidden sm:inline-flex">
               ログアウト
             </button>
-            {/* <Button
-              variant="ghost"
-              className="sm:hidden"
-              icon={<LogOut className="w-5 h-5" />}
-              onClick={signout}
-            ></Button> */}
             {/* レスポンシブで表示切り替え */}
             <button
               className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none sm:hidden"
