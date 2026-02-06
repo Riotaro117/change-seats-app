@@ -53,7 +53,7 @@ export type Database = {
       students: {
         Row: {
           bad_chemistry_with: Json | null
-          creat_at: string | null
+          created_at: string | null
           gender: string
           id: string
           name: string
@@ -62,7 +62,7 @@ export type Database = {
         }
         Insert: {
           bad_chemistry_with?: Json | null
-          creat_at?: string | null
+          created_at?: string | null
           gender: string
           id?: string
           name: string
@@ -71,7 +71,7 @@ export type Database = {
         }
         Update: {
           bad_chemistry_with?: Json | null
-          creat_at?: string | null
+          created_at?: string | null
           gender?: string
           id?: string
           name?: string
