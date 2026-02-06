@@ -21,6 +21,7 @@ import { useAuth } from '../contexts/useAuth';
 import { studentsRepository } from '../modules/students/students.repository';
 import { layoutsRepository } from '../modules/layouts/layouts.repository';
 import { useLayoutsStore } from '../modules/layouts/layouts.state';
+import { ADJACENT_OFFSETS } from '../constants';
 
 const Home = () => {
   // 画面表示の切り替え
@@ -128,8 +129,38 @@ const Home = () => {
   };
 
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
+  const getConflictWarning = (seat: Seat): boolean => {
+    // 座席に生徒がいないならfalseで終了
+    if (!seat.studentId) return false;
+    // 生徒を定義する
+    const student = studentMap.get(seat.studentId);
+    // 生徒がいないならfalseで終了
+    if (!student) return false;
+    // 1.相性が悪いチェック
+    // for-ofで上下左右一つずつループさせて確かめる
+    for (const offset of ADJACENT_OFFSETS) {
+      // 隣の行と列を定義する
+      const neighborRow = seat.row + offset.r;
+      const neighborCol = seat.col + offset.c;
+      // ADJACENT_OFFSETSに基づいた隣の席を見つける
+      const neighborSeat = seats.find((s) => s.row === neighborRow && s.col === neighborCol);
+      // 隣の席があり、隣の席に生徒が座っているなら
+      if (neighborSeat && neighborSeat.studentId) {
+        // 隣の席の生徒が相性悪い配列の中にあるなら違反報告
+        if (student.badChemistryWith.includes(neighborSeat.studentId)) return true;
+        // 隣の生徒を定義し、反対も同様に二重チェックする→片思いの苦手でもNGにする
+        const neighborStudent = studentMap.get(neighborSeat.studentId);
+        if (neighborStudent && neighborStudent.badChemistryWith.includes(seat.studentId))
+          return true;
+      }
+    }
 
-  // 
+    // 2. 視力が悪い人のチェック
+    if (student.needsFrontRow && seat.row > 1) return true;
+
+    // 何も違反がない場合はfalse
+    return false;
+  };
 
   // 席替えをする
   const handleRandomize = () => {
@@ -245,15 +276,16 @@ const Home = () => {
               // 選択している座席のidとseatのidが一致している状態を定義
               const isSelected = isSelectedSeatId === seat.id;
               // seatingLogicを元に制約違反があるかどうか
-              // const hasConflict = getConflict
+              const hasConflict = getConflictWarning(seat);
 
               // 文字の色を定義
               let textColor = 'text-wood-900';
               // 生徒が存在するかどうかで文字の色を変化させる
               if (student) {
                 // 制約違反があるなら赤色で警告
+                if (hasConflict) textColor = 'text-red-700';
                 // 制約違反がなければ、男女で色を変化させる
-                if (student.gender === 'boy') {
+                else if (student.gender === 'boy') {
                   textColor = 'text-blue-900';
                 } else if (student.gender === 'girl') {
                   textColor = 'text-pink-900';
