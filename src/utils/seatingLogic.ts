@@ -192,7 +192,7 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     // 最小のスコアより良いスコアかどうか
     if (score < minScore) {
       // 現在のスコアを最小のスコアにして考える
-      minScore = score
+      minScore = score;
       // 現在の座席配置をベスト配置にコピーする
       bestAssignments = [...assignments];
       // 0点が出たら500回せずその時点で席替えを終える
@@ -202,8 +202,8 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
 
   // ベスト配置をSeat型に変換（studentIdとidxを取り出してバリューに充てる）
   const finalSeats: Seat[] = bestAssignments.map((studentId, idx) => ({
-    id: `seat-${idx / cols}-${idx % cols}`,
-    row: idx / cols,
+    id: `seat-${Math.floor(idx / cols)}-${idx % cols}`,
+    row: Math.floor(idx / cols),
     col: idx % cols,
     studentId,
   }));
