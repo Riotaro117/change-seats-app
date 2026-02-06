@@ -64,14 +64,11 @@ export const studentsRepository = {
   },
   // 生徒の削除
   async deleteStudent(student: Student, userId: string) {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('students')
       .delete()
       .eq('id', student.id)
-      .eq('user_id', userId)
-      .select()
-      .single();
-    if (data == null || error != null) throw new Error(error.message);
-    return data;
+      .eq('user_id', userId);
+    if (error != null) throw new Error(error.message);
   },
 };
