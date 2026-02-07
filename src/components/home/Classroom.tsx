@@ -1,0 +1,172 @@
+import {
+  AlertTriangle,
+  ArrowRightLeft,
+  Glasses,
+  GripHorizontal,
+  ImageIcon,
+  Save,
+  Shuffle,
+  Users,
+} from 'lucide-react';
+import type { Seat, Student, ViewMode } from '../../type';
+
+interface ClassroomProps {
+  viewMode: ViewMode;
+  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
+  handleRandomize: () => void;
+  cols: number;
+  seats: Seat[];
+  studentMap: Map<string, Student>;
+  isSelectedSeatId: string | null;
+  getConflictWarning: (seat: Seat) => boolean;
+  handleSeatClick: (seatId: string) => void;
+}
+
+const Classroom: React.FC<ClassroomProps> = ({
+  viewMode,
+  setViewMode,
+  handleRandomize,
+  cols,
+  seats,
+  studentMap,
+  isSelectedSeatId,
+  getConflictWarning,
+  handleSeatClick,
+}) => {
+  return (
+    viewMode === 'classroom' && (
+      <>
+        <div className="flex flex-wrap gap-4 justify-center mb-8 sticky top-20 z-20 py-2 bg-wood-50/90 backdrop-blur-sm rounded-xl">
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20 shadow-md"
+            onClick={handleRandomize}
+          >
+            <Shuffle className="w-5 h-5" />
+            席替え実行
+          </button>
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
+            onClick={() => setViewMode('students')}
+          >
+            <Users className="w-5 h-5" />
+            名簿・条件
+          </button>
+          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
+            <ImageIcon className="w-5 h-5" />
+            アルバム
+          </button>
+          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
+            <Save className="w-5 h-5" />
+            保存
+          </button>
+        </div>
+        {/* 教室 */}
+        <div className="flex flex-col items-center w-full">
+          <div className="bg-wood-700 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-wood-900">
+            <h3 className="font-serif tracking-widest text-lg opacity-90">黒板</h3>
+          </div>
+
+          {/* 座席をグリッドレイアウトで配置していく styleは動的にクラスを得る書き方 */}
+          <div
+            className="grid gap-4 w-full max-w-5xl mx-auto p-4 justify-center"
+            style={{
+              gridTemplateColumns: `repeat(${cols},minmax(0,1fr))`,
+            }}
+          >
+            {/* 座席の配列を展開して並べていく */}
+            {seats.map((seat) => {
+              // 生徒を定義
+              const student = seat.studentId ? studentMap.get(seat.studentId) : null;
+              // 選択している座席のidとseatのidが一致している状態を定義
+              const isSelected = isSelectedSeatId === seat.id;
+              // seatingLogicを元に制約違反があるかどうか
+              const hasConflict = getConflictWarning(seat);
+
+              // 文字の色を定義
+              let textColor = 'text-wood-900';
+              // 生徒が存在するかどうかで文字の色を変化させる
+              if (student) {
+                // 制約違反があるなら赤色で警告
+                if (hasConflict) textColor = 'text-red-700';
+                // 制約違反がなければ、男女で色を変化させる
+                else if (student.gender === 'boy') textColor = 'text-blue-900';
+                else if (student.gender === 'girl') textColor = 'text-pink-900';
+              }
+
+              // 出力する
+              return (
+                <div
+                  key={seat.id}
+                  onClick={() => handleSeatClick(seat.id)}
+                  className={`
+                relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-2 cursor-pointer
+                transition-all duration-300 transform border-b-4
+                ${
+                  // 選択されているかでスタイルの変化
+                  isSelected
+                    ? 'bg-blue-100 border-blue-400 -translate-y-2 shadow-xl ring-4 ring-blue-200 z-10'
+                    : 'hover:-translate-y-1 hover:shadow-lg'
+                }
+                ${
+                  // 生徒が存在しない時のスタイル、制約違反があったらスタイルを変える(後で)！！！！！
+                  !student
+                    ? 'bg-wood-100 border-wood-200 border-dashed'
+                    : hasConflict
+                      ? 'bg-red-50 border-red-300'
+                      : 'bg-orange-200 border-wood-400'
+                }
+              `}
+                >
+                  {/* 生徒がいて制約違反もなく、選択もされていないなら */}
+                  {student && !isSelected && !hasConflict && (
+                    <div className="absolute inset-2 border border-orange-300/50 rounded-lg pointer-events-none"></div>
+                  )}
+
+                  {/* 生徒の有無でスタイル変更 */}
+                  {student ? (
+                    <>
+                      <div className="flex items-center gap-1 mb-1">
+                        {/* 前列配慮のある生徒の場合のスタイル */}
+                        {student.needsFrontRow && (
+                          <Glasses
+                            className={`w-3 h-3 ${hasConflict ? 'text-red-500' : 'text-wood-700'}`}
+                          />
+                        )}
+                        {/* もし制約違反があったら */}
+                        {hasConflict && (
+                          <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
+                        )}
+                      </div>
+                      {/* 生徒の名前を表示する */}
+                      <span
+                        className={`text-center font-bold leading-tight select-none line-clamp-2 ${textColor}`}
+                        style={{ fontSize: 'clamp(0.7rem, 1vw, 1rem)' }}
+                      >
+                        {student.name}
+                      </span>
+                      {/* ホバーした時だけ入れ替えマークが出現 */}
+                      <div className="mt-2 opacity-0 hover:opacity-100 absolute inset-0 bg-black/5 rounded-xl flex items-center justify-center transition-opacity">
+                        <ArrowRightLeft className="text-wood-800 w-6 h-6" />
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-wood-300 text-xs font-medium">空席</span>
+                  )}
+
+                  {/* 座席が選択された時の表示変更 */}
+                  {isSelected && (
+                    <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 shadow-md">
+                      <GripHorizontal className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </>
+    )
+  );
+};
+
+export default Classroom;
