@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
-  AlertTriangle,
-  ArrowRightLeft,
   ChevronDown,
   ChevronUp,
+  CircleUserRound,
   Glasses,
-  GripHorizontal,
-  ImageIcon,
   LogOut,
-  Save,
-  Shuffle,
-  Users,
+  Plus,
+  Trash2,
+  User,
+  X,
 } from 'lucide-react';
 import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
@@ -22,6 +20,7 @@ import { studentsRepository } from '../modules/students/students.repository';
 import { layoutsRepository } from '../modules/layouts/layouts.repository';
 import { useLayoutsStore } from '../modules/layouts/layouts.state';
 import { ADJACENT_OFFSETS } from '../constants';
+import Classroom from '../components/home/Classroom';
 
 const Home = () => {
   // 画面表示の切り替え
@@ -42,7 +41,7 @@ const Home = () => {
   // 現在選択している座席のid
   const [isSelectedSeatId, setIsSelectedSeatId] = useState<string | null>(null);
   // 生徒に高速アクセスするために、mapの作成
-  const studentMap = new Map<string, Student>(students?.map((student) => [student.id, student]));
+  const studentMap = new Map<string, Student>(students.map((student) => [student.id, student]));
 
   useEffect(() => {
     if (!isLoading) {
@@ -169,23 +168,21 @@ const Home = () => {
     // rowsを定義する
     const rows = Math.ceil(totalSeats / cols);
     // 新しい座席を制約を元にして定義する
-    if (students) {
-      const newSeats = generateSeatingChart(rows, cols, students);
-      // 総座席数より、生徒が座っている座席が少ない場合
-      if (newSeats.length < totalSeats) {
-        // 生徒が座っていない座席に繰り返し処理でseatのstudentIdにnullを入れていく
-        for (let i = newSeats.length; i < totalSeats; i++) {
-          newSeats.push({
-            id: `seat-${Math.floor(i / cols)}-${i % cols}`,
-            row: Math.floor(i / cols),
-            col: i % cols,
-            studentId: null,
-          });
-        }
+    const newSeats = generateSeatingChart(rows, cols, students);
+    // 総座席数より、生徒が座っている座席が少ない場合
+    if (newSeats.length < totalSeats) {
+      // 生徒が座っていない座席に繰り返し処理でseatのstudentIdにnullを入れていく
+      for (let i = newSeats.length; i < totalSeats; i++) {
+        newSeats.push({
+          id: `seat-${Math.floor(i / cols)}-${i % cols}`,
+          row: Math.floor(i / cols),
+          col: i % cols,
+          studentId: null,
+        });
       }
-      // 座席を更新する
-      setSeats(newSeats);
     }
+    // 座席を更新する
+    setSeats(newSeats);
   };
 
   const signout = async () => {
@@ -237,131 +234,202 @@ const Home = () => {
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 pt-6">
-        {viewMode === 'classroom' && (
+        {/* 教室モード */}
+        <Classroom
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          handleRandomize={handleRandomize}
+          cols={cols}
+          seats={seats}
+          studentMap={studentMap}
+          isSelectedSeatId={isSelectedSeatId}
+          getConflictWarning={getConflictWarning}
+          handleSeatClick={handleSeatClick}
+        />
+        {/* 生徒名簿モード */}
+        {viewMode === 'students' && (
           <>
-            <div className="flex flex-wrap gap-4 justify-center mb-8 sticky top-20 z-20 py-2 bg-wood-50/90 backdrop-blur-sm rounded-xl">
-              <button
-                className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20 shadow-md"
-                onClick={handleRandomize}
-              >
-                <Shuffle className="w-5 h-5" />
-                席替え実行
-              </button>
-              <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
-                <Users className="w-5 h-5" />
-                名簿・条件
-              </button>
-              <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
-                <ImageIcon className="w-5 h-5" />
-                アルバム
-              </button>
-              <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
-                <Save className="w-5 h-5" />
-                保存
-              </button>
-            </div>
-            {/* 教室 */}
-            <div className="flex flex-col items-center w-full">
-              <div className="bg-wood-700 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-wood-900">
-                <h3 className="font-serif tracking-widest text-lg opacity-90">黒板</h3>
+            <div className="bg-white rounded-3xl shadow-xl border-4 border-wood-200 p-6 h-full flex flex-col max-w-4xl mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-wood-800 font-serif">生徒名簿</h2>
+                  <p className="text-wood-500 text-sm">現在の人数: {students.length}人</p>
+                </div>
+                <button
+                  // onClick={}
+                  className="items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50"
+                >
+                  完了
+                </button>
               </div>
 
-              {/* 座席をグリッドレイアウトで配置していく styleは動的にクラスを得る書き方 */}
+              <div className="flex flex-col sm:flex-row gap-2 mb-6 bg-wood-50 p-4 rounded-xl border border-wood-100">
+                <input
+                  type="text"
+                  // value={newStudentName}
+                  // onChange={(e) => setNewStudentName(e.target.value)}
+                  placeholder="新しい生徒の名前"
+                  className="flex-1 px-4 py-3 rounded-xl border-2 border-wood-200 focus:border-wood-400 focus:outline-none bg-white"
+                  // onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+                />
+                <div className="flex gap-2">
+                  <button
+                  // onClick={() => setNewStudentGender('boy')}
+                  // className={`px-4 py-2 rounded-xl border-2 font-bold transition-all ${newStudentGender === 'boy' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'bg-white border-wood-200 text-gray-400'}`}
+                  >
+                    男子
+                  </button>
+                  <button
+                  // onClick={() => setNewStudentGender('girl')}
+                  // className={`px-4 py-2 rounded-xl border-2 font-bold transition-all ${newStudentGender === 'girl' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'bg-white border-wood-200 text-gray-400'}`}
+                  >
+                    女子
+                  </button>
+                  {/* <Button
+                    onClick={handleAdd}
+                    isDataLoading={isDataLoading}
+                    icon={<Plus className="w-5 h-5" />}
+                  >
+                    追加
+                  </Button> */}
+                  <button
+                  // onClick={}
+                  >
+                    追加
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
               <div
-                className="grid gap-4 w-full max-w-5xl mx-auto p-4 justify-center"
-                style={{
-                  gridTemplateColumns: `repeat(${cols},minmax(0,1fr))`,
-                }}
+              // className={`flex-1 overflow-y-auto pr-2 space-y-3 ${isDataLoading ? 'opacity-50 pointer-events-none' : ''}`}
               >
-                {/* 座席の配列を展開して並べていく */}
-                {seats.map((seat) => {
-                  // 生徒を定義
-                  const student = seat.studentId ? studentMap.get(seat.studentId) : null;
-                  // 選択している座席のidとseatのidが一致している状態を定義
-                  const isSelected = isSelectedSeatId === seat.id;
-                  // seatingLogicを元に制約違反があるかどうか
-                  const hasConflict = getConflictWarning(seat);
-
-                  // 文字の色を定義
-                  let textColor = 'text-wood-900';
-                  // 生徒が存在するかどうかで文字の色を変化させる
-                  if (student) {
-                    // 制約違反があるなら赤色で警告
-                    if (hasConflict) textColor = 'text-red-700';
-                    // 制約違反がなければ、男女で色を変化させる
-                    else if (student.gender === 'boy') textColor = 'text-blue-900';
-                    else if (student.gender === 'girl') textColor = 'text-pink-900';
-                  }
-
-                  // 出力する
-                  return (
-                    <div
-                      key={seat.id}
-                      onClick={() => handleSeatClick(seat.id)}
-                      className={`
-                relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-2 cursor-pointer
-                transition-all duration-300 transform border-b-4
-                ${
-                  // 選択されているかでスタイルの変化
-                  isSelected
-                    ? 'bg-blue-100 border-blue-400 -translate-y-2 shadow-xl ring-4 ring-blue-200 z-10'
-                    : 'hover:-translate-y-1 hover:shadow-lg'
-                }
-                ${
-                  // 生徒が存在しない時のスタイル、制約違反があったらスタイルを変える(後で)！！！！！
-                  !student
-                    ? 'bg-wood-100 border-wood-200 border-dashed'
-                    : hasConflict
-                      ? 'bg-red-50 border-red-300'
-                      : 'bg-orange-200 border-wood-400'
-                }
-              `}
-                    >
-                      {/* 生徒がいて制約違反もなく、選択もされていないなら */}
-                      {student && !isSelected && !hasConflict && (
-                        <div className="absolute inset-2 border border-orange-300/50 rounded-lg pointer-events-none"></div>
-                      )}
-
-                      {/* 生徒の有無でスタイル変更 */}
-                      {student ? (
-                        <>
-                          <div className="flex items-center gap-1 mb-1">
-                            {/* 前列配慮のある生徒の場合のスタイル */}
-                            {student.needsFrontRow && (
-                              <Glasses
-                                className={`w-3 h-3 ${hasConflict ? 'text-red-500' : 'text-wood-700'}`}
-                              />
-                            )}
-                            {/* もし制約違反があったら */}
-                            {hasConflict && (
-                              <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
-                            )}
-                          </div>
-                          {/* 生徒の名前を表示する */}
-                          <span
-                            className={`text-center font-bold leading-tight select-none line-clamp-2 ${textColor}`}
-                            style={{ fontSize: 'clamp(0.7rem, 1vw, 1rem)' }}
+                {students.map((student) => (
+                  <div
+                    key={student.id}
+                    className="bg-wood-50 p-4 rounded-2xl border border-wood-100 flex flex-col sm:flex-row gap-4 items-start sm:items-center transition-all hover:border-wood-300 group"
+                  >
+                    <div className="flex items-center gap-3 flex-1">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                          student.gender === 'boy'
+                            ? 'bg-blue-50 border-blue-200 text-blue-600'
+                            : student.gender === 'girl'
+                              ? 'bg-pink-50 border-pink-200 text-pink-600'
+                              : 'bg-wood-200 border-wood-300 text-wood-700'
+                        }`}
+                      >
+                        <User className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-lg text-wood-900">{student.name}</span>
+                        <div className="flex gap-2 sm:hidden mt-1">
+                          <button
+                            // onClick={() => updateGender(student, 'boy')}
+                            className={`text-xs px-2 py-0.5 rounded border ${student.gender === 'boy' ? 'bg-blue-100 border-blue-300 text-blue-700' : 'border-gray-200 text-gray-400'}`}
                           >
-                            {student.name}
-                          </span>
-                          {/* ホバーした時だけ入れ替えマークが出現 */}
-                          <div className="mt-2 opacity-0 hover:opacity-100 absolute inset-0 bg-black/5 rounded-xl flex items-center justify-center transition-opacity">
-                            <ArrowRightLeft className="text-wood-800 w-6 h-6" />
-                          </div>
-                        </>
-                      ) : (
-                        <span className="text-wood-300 text-xs font-medium">空席</span>
-                      )}
-
-                      {/* 座席が選択された時の表示変更 */}
-                      {isSelected && (
-                        <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 shadow-md">
-                          <GripHorizontal className="w-4 h-4" />
+                            男
+                          </button>
+                          <button
+                            // onClick={() => updateGender(student, 'girl')}
+                            className={`text-xs px-2 py-0.5 rounded border ${student.gender === 'girl' ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-gray-200 text-gray-400'}`}
+                          >
+                            女
+                          </button>
                         </div>
-                      )}
+                      </div>
                     </div>
-                  );
-                })}
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="hidden sm:flex bg-white rounded-lg p-1 border border-wood-200">
+                        <button
+                          // onClick={() => updateGender(student, 'boy')}
+                          className={`p-1.5 rounded-md transition-all ${student.gender === 'boy' ? 'bg-blue-100 text-blue-600 shadow-sm' : 'text-gray-300 hover:text-gray-500'}`}
+                          title="男子"
+                        >
+                          <CircleUserRound className="w-5 h-5" />
+                        </button>
+                        <button
+                          // onClick={() => updateGender(student, 'girl')}
+                          className={`p-1.5 rounded-md transition-all ${student.gender === 'girl' ? 'bg-pink-100 text-pink-600 shadow-sm' : 'text-gray-300 hover:text-gray-500'}`}
+                          title="女子"
+                        >
+                          <CircleUserRound className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      <button
+                        // onClick={() => toggleProperty(student, 'needsFrontRow')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                          student.needsFrontRow
+                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'bg-white text-gray-400 border border-transparent hover:bg-gray-100'
+                        }`}
+                      >
+                        <Glasses className="w-4 h-4" />
+                        {student.needsFrontRow ? '前席希望' : '視力OK'}
+                      </button>
+
+                      <div className="relative">
+                        <button
+                          // onClick={() => setEditingId(editingId === student.id ? null : student.id)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                            student.badChemistryWith.length > 0
+                              ? 'bg-red-100 text-red-700 border border-red-200'
+                              : 'bg-white text-gray-400 border border-transparent hover:bg-gray-100'
+                          }`}
+                        >
+                          <X className="w-4 h-4" />
+                          NG: {student.badChemistryWith.length}人
+                        </button>
+                      </div>
+
+                      <button
+                        // onClick={() => handleRemove(student.id)}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                    {/* 隣の席にしたくない生徒を選択画面 */}
+                    {/* {editingId === student.id && (
+                      <div className="w-full mt-3 p-3 bg-white rounded-xl border-2 border-red-100">
+                        <p className="text-xs font-bold text-red-500 mb-2 flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          隣の席にしたくない生徒を選択:
+                        </p>
+                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                          {students
+                            .filter((s) => s.id !== student.id)
+                            .map((other) => {
+                              const isSelected = student.badChemistryWith.includes(other.id);
+                              return (
+                                <button
+                                  key={other.id}
+                                  onClick={() => toggleBadChemistry(student, other.id)}
+                                  className={`px-2 py-1 text-xs rounded-md border transition-all ${
+                                    isSelected
+                                      ? 'bg-red-500 text-white border-red-600 shadow-sm'
+                                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
+                                  }`}
+                                >
+                                  {other.name}{' '}
+                                  {isSelected && <Check className="w-3 h-3 inline ml-1" />}
+                                </button>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )} */}
+                  </div>
+                ))}
+
+                {students.length === 0 && (
+                  <div className="text-center py-12 text-wood-400">
+                    <p className="text-lg">生徒が登録されていません</p>
+                    <p className="text-sm">「追加」ボタンから登録してください</p>
+                  </div>
+                )}
               </div>
             </div>
           </>
