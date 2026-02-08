@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
 import {
-  ChevronDown,
-  ChevronUp,
   CircleUserRound,
   Glasses,
-  LogOut,
   Plus,
   Trash2,
   User,
   X,
 } from 'lucide-react';
-import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 import type { Seat, Student, ViewMode } from '../type';
 import { useStudentsStore } from '../modules/students/students.state';
@@ -21,6 +17,8 @@ import { layoutsRepository } from '../modules/layouts/layouts.repository';
 import { useLayoutsStore } from '../modules/layouts/layouts.state';
 import { ADJACENT_OFFSETS } from '../constants';
 import Classroom from '../components/home/Classroom';
+import Header from '../components/layout/Header';
+import SideButton from '../components/ui/SideButton';
 
 const Home = () => {
   // 画面表示の切り替え
@@ -185,54 +183,9 @@ const Home = () => {
     setSeats(newSeats);
   };
 
-  const signout = async () => {
-    await authRepository.signout();
-    setUser(undefined);
-  };
-
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
-      <header className="bg-white border-b border-wood-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => setViewMode('classroom')}
-          >
-            <div className="bg-orange-100 p-2 rounded-lg">🏫</div>
-            <h1 className="text-xl font-bold font-serif hidden sm:block">席替えしようよ</h1>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 mr-4 bg-wood-50 px-3 py-1 rounded-lg border border-wood-100">
-              <span className="text-sm font-bold text-wood-600">座席数:</span>
-              <button
-                onClick={() => handleResize(Math.max(20, totalSeats - 1))}
-                className="p-1 hover:bg-wood-200 rounded"
-              >
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              <span className="w-8 text-center font-mono">{totalSeats}</span>
-              <button
-                onClick={() => handleResize(Math.min(40, totalSeats + 1))}
-                className="p-1 hover:bg-wood-200 rounded"
-              >
-                <ChevronUp className="w-4 h-4" />
-              </button>
-            </div>
-
-            <button className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none hidden sm:inline-flex">
-              ログアウト
-            </button>
-            {/* レスポンシブで表示切り替え */}
-            <button
-              className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none sm:hidden"
-              onClick={signout}
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header setViewMode={setViewMode} onResize={handleResize} totalSeats={totalSeats} />
       <main className="max-w-7xl mx-auto px-4 pt-6">
         {/* 教室モード */}
         <Classroom
@@ -436,23 +389,7 @@ const Home = () => {
         )}
       </main>
       {/* サイドボタン */}
-      <div className="fixed bottom-6 right-6 md:hidden">
-        <div className="bg-white p-2 rounded-full shadow-xl border-2 border-wood-200 flex flex-col gap-2">
-          <button
-            onClick={() => handleResize(Math.min(40, totalSeats + 1))}
-            className="p-2 bg-wood-100 rounded-full hover:bg-wood-200"
-          >
-            <ChevronUp />
-          </button>
-          <span className="text-center font-bold text-xs">{totalSeats}</span>
-          <button
-            onClick={() => handleResize(Math.max(20, totalSeats - 1))}
-            className="p-2 bg-wood-100 rounded-full hover:bg-wood-200"
-          >
-            <ChevronDown />
-          </button>
-        </div>
-      </div>
+    <SideButton onResize={handleResize}totalSeats={totalSeats}/>
     </div>
   );
 };
