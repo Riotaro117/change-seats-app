@@ -9,37 +9,71 @@ import {
   Users,
 } from 'lucide-react';
 import type { Seat, Student, ViewMode } from '../../type';
+import { ADJACENT_OFFSETS } from '../../constants';
 
 interface ClassroomProps {
   viewMode: ViewMode;
   setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
-  handleRandomize: () => void;
+  onRandomize: () => void;
   cols: number;
   seats: Seat[];
   studentMap: Map<string, Student>;
   isSelectedSeatId: string | null;
-  getConflictWarning: (seat: Seat) => boolean;
-  handleSeatClick: (seatId: string) => void;
+  onSeatClick: (seatId: string) => void;
 }
 
 const Classroom: React.FC<ClassroomProps> = ({
   viewMode,
   setViewMode,
-  handleRandomize,
+  onRandomize,
   cols,
   seats,
   studentMap,
   isSelectedSeatId,
-  getConflictWarning,
-  handleSeatClick,
+  onSeatClick,
 }) => {
+
+    // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
+  const getConflictWarning = (seat: Seat): boolean => {
+    // 座席に生徒がいないならfalseで終了
+    if (!seat.studentId) return false;
+    // 生徒を定義する
+    const student = studentMap.get(seat.studentId);
+    // 生徒がいないならfalseで終了
+    if (!student) return false;
+
+    // 1.相性が悪いチェック
+    // for-ofで上下左右一つずつループさせて確かめる
+    for (const offset of ADJACENT_OFFSETS) {
+      // 隣の行と列を定義する
+      const neighborRow = seat.row + offset.r;
+      const neighborCol = seat.col + offset.c;
+      // ADJACENT_OFFSETSに基づいた隣の席を見つける
+      const neighborSeat = seats.find((s) => s.row === neighborRow && s.col === neighborCol);
+      // 隣の席があり、隣の席に生徒が座っているなら
+      if (neighborSeat && neighborSeat.studentId) {
+        // 隣の席の生徒が相性悪い配列の中にあるなら違反報告
+        if (student.badChemistryWith.includes(neighborSeat.studentId)) return true;
+        // 隣の生徒を定義し、反対も同様に二重チェックする→片思いの苦手でもNGにする
+        const neighborStudent = studentMap.get(neighborSeat.studentId);
+        if (neighborStudent && neighborStudent.badChemistryWith.includes(seat.studentId))
+          return true;
+      }
+    }
+
+    // 2. 視力が悪い人のチェック
+    if (student.needsFrontRow && seat.row > 1) return true;
+
+    // 何も違反がない場合はfalse
+    return false;
+  };
   return (
     viewMode === 'classroom' && (
       <>
         <div className="flex flex-wrap gap-4 justify-center mb-8 sticky top-20 z-20 py-2 bg-wood-50/90 backdrop-blur-sm rounded-xl">
           <button
             className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20 shadow-md"
-            onClick={handleRandomize}
+            onClick={onRandomize}
           >
             <Shuffle className="w-5 h-5" />
             席替え実行
@@ -97,7 +131,7 @@ const Classroom: React.FC<ClassroomProps> = ({
               return (
                 <div
                   key={seat.id}
-                  onClick={() => handleSeatClick(seat.id)}
+                  onClick={() => onSeatClick(seat.id)}
                   className={`
                 relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-2 cursor-pointer
                 transition-all duration-300 transform border-b-4
