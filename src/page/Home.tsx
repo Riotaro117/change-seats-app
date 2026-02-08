@@ -76,6 +76,10 @@ const Home = () => {
     setSeats(newSeats);
   };
 
+  const handleCols = (col: number) => {
+    setCols(col);
+  };
+
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
       <Header setViewMode={setViewMode} onResize={handleResize} totalSeats={totalSeats} />
@@ -88,7 +92,7 @@ const Home = () => {
         setViewMode={setViewMode}
       />
       {/* サイドボタン */}
-      <SideButton onResize={handleResize} totalSeats={totalSeats} />
+      <SideButton onResize={handleResize} totalSeats={totalSeats} cols={cols} onCols={handleCols} />
     </div>
   );
 };
