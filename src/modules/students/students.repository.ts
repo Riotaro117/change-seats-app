@@ -37,8 +37,8 @@ export const studentsRepository = {
         user_id: userId, // 作成者のid
         name: student.name,
         gender: student.gender,
-        needsFrontRow: student.needsFrontRow,
-        badChemistryWith: student.badChemistryWith,
+        needs_front_row: student.needsFrontRow, // キーはDBの表記に合わせること
+        bad_chemistry_with: student.badChemistryWith,
       })
       .select()
       .single();
@@ -46,14 +46,14 @@ export const studentsRepository = {
     return data;
   },
   // 生徒の更新
-  async updateStudent(student: Student, userId: string) {
+  async updateStudent(userId: string, student: Student) {
     const { data, error } = await supabase
       .from('students')
       .update({
         name: student.name,
         gender: student.gender,
-        needsFrontRow: student.needsFrontRow,
-        badChemistryWith: student.badChemistryWith,
+        needs_front_row: student.needsFrontRow,
+        bad_chemistry_with: student.badChemistryWith,
       })
       .eq('id', student.id)
       .eq('user_id', userId)
@@ -63,7 +63,7 @@ export const studentsRepository = {
     return data;
   },
   // 生徒の削除
-  async deleteStudent(student: Student, userId: string) {
+  async deleteStudent(userId: string, student: Student) {
     const { error } = await supabase
       .from('students')
       .delete()
