@@ -83,6 +83,25 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
     }
   };
 
+  const toggleBadChemistry = async (student: Student, targetId: string) => {
+    try {
+      // 元々相性が悪い子を持っているか定義
+      const hasConflict = student.badChemistryWith.includes(targetId);
+      // 元々持っていたらその子をfilterで除外し、そうでないならそのまま追加する
+      const updateChemistry = hasConflict
+        ? student.badChemistryWith.filter((id) => id !== targetId)
+        : [...student.badChemistryWith, targetId];
+
+      //更新した生徒を定義する
+      const updateStudent = { ...student, badChemistryWith: updateChemistry };
+      await studentsRepository.updateStudent(currentUser!.id, updateStudent);
+
+      setStudents((prev) => prev.map((s) => (s.id === updateStudent.id ? updateStudent : s)));
+    } catch (error) {
+      console.error(error);
+      alert('更新に失敗しました');
+    }
+  };
 
   return (
     viewMode === 'students' && (
