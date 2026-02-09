@@ -1,4 +1,14 @@
-import { CircleUserRound, Glasses, Loader2, Plus, Trash2, User, X } from 'lucide-react';
+import {
+  Check,
+  CircleUserRound,
+  Glasses,
+  Loader2,
+  Plus,
+  Trash2,
+  User,
+  Users,
+  X,
+} from 'lucide-react';
 import { useStudentsStore } from '../../modules/students/students.state';
 import type { Student, ViewMode } from '../../type';
 import { useState } from 'react';
@@ -17,12 +27,14 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
   const [newStudentName, setNewStudentName] = useState('');
   // 生徒の性別
   const [newStudentGender, setNewStudentGender] = useState<'boy' | 'girl' | 'other'>('boy');
-
+  // DBとの通信の状態
   const [isDataLoading, setIsDataLoading] = useState(false);
+  // 編集しているidの状態
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // 生徒を追加する処理
   const handleAddStudent = async () => {
-    // 入力欄の両端の空白はカットしてから
+    // 入力欄の両端の空白はカットして、空白なら処理を止める→文字列をbooleanにすると、''はfalse
     if (!newStudentName.trim()) return;
     setIsDataLoading(true);
     try {
@@ -57,6 +69,20 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
       alert('更新に失敗しました');
     }
   };
+
+  // propのオンオフを更新する関数
+  const handleToggleProperty = async (student: Student, props: 'needsFrontRow') => {
+    try {
+      // キーのみ更新する生徒を定義する→ブラケット方式で動的にキーを取得する
+      const updateStudent = { ...student, [props]: !student[props] };
+      await studentsRepository.updateStudent(currentUser!.id, updateStudent);
+      setStudents((prev) => prev.map((s) => (s.id === updateStudent.id ? updateStudent : s)));
+    } catch (error) {
+      console.error(error);
+      alert('更新に失敗しました');
+    }
+  };
+
 
   return (
     viewMode === 'students' && (
@@ -169,10 +195,10 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                   </div>
 
                   <button
-                    // onClick={() => toggleProperty(student, 'needsFrontRow')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    onClick={() => handleToggleProperty(student, 'needsFrontRow')}
+                    className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                       student.needsFrontRow
-                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                        ? 'bg-yellow-100 text-blue-700 border border-blue-200'
                         : 'bg-white text-gray-400 border border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -182,7 +208,7 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
 
                   <div className="relative">
                     <button
-                      // onClick={() => setEditingId(editingId === student.id ? null : student.id)}
+                      onClick={() => setEditingId(editingId === student.id ? null : student.id)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                         student.badChemistryWith.length > 0
                           ? 'bg-red-100 text-red-700 border border-red-200'
@@ -202,35 +228,38 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                   </button>
                 </div>
                 {/* 隣の席にしたくない生徒を選択画面 */}
-                {/* {editingId === student.id && (
-                      <div className="w-full mt-3 p-3 bg-white rounded-xl border-2 border-red-100">
-                        <p className="text-xs font-bold text-red-500 mb-2 flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          隣の席にしたくない生徒を選択:
-                        </p>
-                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                          {students
-                            .filter((s) => s.id !== student.id)
-                            .map((other) => {
-                              const isSelected = student.badChemistryWith.includes(other.id);
-                              return (
-                                <button
-                                  key={other.id}
-                                  onClick={() => toggleBadChemistry(student, other.id)}
-                                  className={`px-2 py-1 text-xs rounded-md border transition-all ${
-                                    isSelected
-                                      ? 'bg-red-500 text-white border-red-600 shadow-sm'
-                                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
-                                  }`}
-                                >
-                                  {other.name}{' '}
-                                  {isSelected && <Check className="w-3 h-3 inline ml-1" />}
-                                </button>
-                              );
-                            })}
-                        </div>
-                      </div>
-                    )} */}
+                {editingId === student.id && (
+                  <div className="w-full mt-3 p-3 bg-white rounded-xl border-2 border-red-100">
+                    <p className="text-xs font-bold text-red-500 mb-2 flex items-center gap-1">
+                      <Users className="w-3 h-3" />
+                      隣の席にしたくない生徒を選択:
+                    </p>
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                      {/* {students.filter(s => s.id !== student.id).map(other =>{
+  const 
+})} */}
+
+                      {students
+                        .filter((s) => s.id !== student.id)
+                        .map((other) => {
+                          const isSelected = student.badChemistryWith.includes(other.id);
+                          return (
+                            <button
+                              key={other.id}
+                              onClick={() => toggleBadChemistry(student, other.id)}
+                              className={`px-2 py-1 text-xs rounded-md border transition-all ${
+                                isSelected
+                                  ? 'bg-red-500 text-white border-red-600 shadow-sm'
+                                  : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              {other.name} {isSelected && <Check className="w-3 h-3 inline ml-1" />}
+                            </button>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 
