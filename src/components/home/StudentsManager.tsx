@@ -103,6 +103,23 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
     }
   };
 
+  const handleRemove = async (targetId: string) => {
+    if (!confirm('本当に削除しますか？')) return;
+    setIsDataLoading(true);
+    try {
+      // 選択されたidと一致する生徒を削除する生徒として定義する
+      const deleteStudent = students.find((s) => s.id === targetId);
+      if (!deleteStudent) return;
+      await studentsRepository.deleteStudent(currentUser!.id, deleteStudent);
+      setStudents((prev) => prev.filter((s) => s.id !== targetId));
+    } catch (error) {
+      console.error(error);
+      alert('削除に失敗しました');
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
+
   return (
     viewMode === 'students' && (
       <>
@@ -240,7 +257,7 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                   </div>
 
                   <button
-                    // onClick={() => handleRemove(student.id)}
+                    onClick={() => handleRemove(student.id)}
                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -254,13 +271,10 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                       隣の席にしたくない生徒を選択:
                     </p>
                     <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                      {/* {students.filter(s => s.id !== student.id).map(other =>{
-  const 
-})} */}
-
                       {students
-                        .filter((s) => s.id !== student.id)
+                        .filter((s) => s.id !== student.id) // 選択されている生徒自身は除外する
                         .map((other) => {
+                          // 相性が悪い生徒に選択されているか状態を定義
                           const isSelected = student.badChemistryWith.includes(other.id);
                           return (
                             <button
@@ -272,7 +286,8 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                                   : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
                               }`}
                             >
-                              {other.name} {isSelected && <Check className="w-3 h-3 inline ml-1" />}
+                              {other.name}
+                              {isSelected && <Check className="w-3 h-3 inline ml-1" />}
                             </button>
                           );
                         })}
