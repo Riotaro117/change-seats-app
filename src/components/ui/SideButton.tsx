@@ -4,12 +4,12 @@ interface SideButtonProps {
   onResize: (size: number) => void;
   totalSeats: number;
   cols: number;
-  onCols: (col: number) => void
+  onCols: (col: number) => void;
 }
 
-const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats,cols,onCols }) => {
+const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats, cols, onCols }) => {
   return (
-    <div className="flex gap-5 fixed bottom-6 right-6 md:hidden">
+    <div className="flex gap-[5px] fixed bottom-6 right-6 md:hidden">
       <div className="bg-white p-2 rounded-full shadow-xl border-2 border-wood-200 flex flex-col gap-2">
         <button
           onClick={() => onResize(Math.min(45, totalSeats + 1))}
@@ -24,7 +24,6 @@ const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats,cols,onCol
         >
           <ChevronDown />
         </button>
-      
       </div>
       <div className="bg-white p-2 rounded-full shadow-xl border-2 border-wood-200 flex flex-col gap-2">
         <button
@@ -40,7 +39,6 @@ const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats,cols,onCol
         >
           <ChevronDown />
         </button>
-      
       </div>
     </div>
   );
