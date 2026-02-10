@@ -32,8 +32,7 @@ const Classroom: React.FC<ClassroomProps> = ({
   isSelectedSeatId,
   onSeatClick,
 }) => {
-
-    // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
+  // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
   const getConflictWarning = (seat: Seat): boolean => {
     // 座席に生徒がいないならfalseで終了
     if (!seat.studentId) return false;
@@ -85,7 +84,10 @@ const Classroom: React.FC<ClassroomProps> = ({
             <Users className="w-5 h-5" />
             名簿・条件
           </button>
-          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
+            onClick={() => setViewMode('history')}
+          >
             <ImageIcon className="w-5 h-5" />
             アルバム
           </button>
