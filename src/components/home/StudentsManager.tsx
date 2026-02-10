@@ -14,10 +14,10 @@ import type { Student } from '../../type';
 import { useState } from 'react';
 import { studentsRepository } from '../../modules/students/students.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
-import { useViewMode } from '../../modules/viewMode/viewMode.state';
+import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 
 const StudentsManager: React.FC = () => {
-  const { viewMode, setViewMode } = useViewMode();
+  const { viewMode, setViewMode } = useViewModeStore();
   const { students, setStudents } = useStudentsStore();
   const { currentUser } = useCurrentUserStore();
   // 生徒名簿の名前入力欄の値

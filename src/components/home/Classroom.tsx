@@ -10,7 +10,9 @@ import {
 } from 'lucide-react';
 import type { Seat, Student } from '../../type';
 import { ADJACENT_OFFSETS } from '../../constants';
-import { useViewMode } from '../../modules/viewMode/viewMode.state';
+import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
+import { layoutsRepository } from '../../modules/layouts/layouts.repository';
+import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 
 interface ClassroomProps {
   onRandomize: () => void;
@@ -29,7 +31,8 @@ const Classroom: React.FC<ClassroomProps> = ({
   isSelectedSeatId,
   onSeatClick,
 }) => {
-  const { viewMode, setViewMode } = useViewMode();
+  const { viewMode, setViewMode } = useViewModeStore();
+  const {currentUser}= useCurrentUserStore()
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
   const getConflictWarning = (seat: Seat): boolean => {
     // 座席に生徒がいないならfalseで終了
@@ -64,6 +67,21 @@ const Classroom: React.FC<ClassroomProps> = ({
     // 何も違反がない場合はfalse
     return false;
   };
+  const saveCurrentLayout = async() => {
+    const nameLayout = prompt(
+      '保存する名前を入力してください（例: 4月の席替え）',
+      `${new Date().getMonth() + 1}月の席替え`,
+    );
+    if (!nameLayout) return;
+
+    try {
+      await layoutsRepository.createLayout()
+      
+    } catch (error) {
+      console.error(error);
+      alert("保存に失敗しました")
+    }
+  };
   return (
     viewMode === 'classroom' && (
       <>
@@ -89,7 +107,10 @@ const Classroom: React.FC<ClassroomProps> = ({
             <ImageIcon className="w-5 h-5" />
             アルバム
           </button>
-          <button className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md">
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
+            onClick={saveCurrentLayout}
+          >
             <Save className="w-5 h-5" />
             保存
           </button>

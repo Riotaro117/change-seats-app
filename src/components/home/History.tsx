@@ -3,7 +3,7 @@ import { useLayoutsStore } from '../../modules/layouts/layouts.state';
 import type { ClassroomLayout, Seat } from '../../type';
 import { layoutsRepository } from '../../modules/layouts/layouts.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
-import { useViewMode } from '../../modules/viewMode/viewMode.state';
+import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 
 interface HistoryProps {
   setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
@@ -12,7 +12,7 @@ interface HistoryProps {
 }
 
 const History: React.FC<HistoryProps> = ({ setSeats, setCols, setTotalSeats }) => {
-  const { viewMode, setViewMode } = useViewMode();
+  const { viewMode, setViewMode } = useViewModeStore();
   const { layouts, setLayouts } = useLayoutsStore();
   const { currentUser } = useCurrentUserStore();
   const loadLayout = async (layout: ClassroomLayout) => {
