@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
-import type { Seat, ViewMode } from '../type';
+import type { Seat } from '../type';
 import { useStudentsStore } from '../modules/students/students.state';
 import { useAuth } from '../contexts/useAuth';
 import { studentsRepository } from '../modules/students/students.repository';
@@ -11,8 +11,6 @@ import SideButton from '../components/ui/SideButton';
 import MainContents from '../components/home/MainContents';
 
 const Home = () => {
-  // 画面表示の切り替え
-  const [viewMode, setViewMode] = useState<ViewMode>('classroom');
   // 座席の状態
   const [seats, setSeats] = useState<Seat[]>([]); // 初期値に[]忘れがち
   // 総座席数
@@ -82,7 +80,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
-      <Header setViewMode={setViewMode} onResize={handleResize} totalSeats={totalSeats} />
+      <Header onResize={handleResize} totalSeats={totalSeats} />
       <MainContents
         seats={seats}
         setSeats={setSeats}
@@ -90,8 +88,6 @@ const Home = () => {
         setTotalSeats={setTotalSeats}
         cols={cols}
         setCols ={setCols}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
       />
       {/* サイドボタン */}
       <SideButton onResize={handleResize} totalSeats={totalSeats} cols={cols} onCols={handleCols} />

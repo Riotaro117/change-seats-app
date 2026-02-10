@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Classroom from './Classroom';
-import type { Seat, Student, ViewMode } from '../../type';
+import type { Seat, Student } from '../../type';
 import { useStudentsStore } from '../../modules/students/students.state';
 import { generateSeatingChart } from '../../utils/seatingLogic';
 import StudentsManager from './StudentsManager';
@@ -10,11 +10,9 @@ interface MainContentsProps {
   seats: Seat[];
   setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
   totalSeats: number;
-  setTotalSeats: React.Dispatch<React.SetStateAction<number>>,
+  setTotalSeats: React.Dispatch<React.SetStateAction<number>>;
   cols: number;
   setCols: React.Dispatch<React.SetStateAction<number>>;
-  viewMode: ViewMode;
-  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
 }
 
 const MainContents: React.FC<MainContentsProps> = ({
@@ -24,8 +22,6 @@ const MainContents: React.FC<MainContentsProps> = ({
   setTotalSeats,
   cols,
   setCols,
-  viewMode,
-  setViewMode,
 }) => {
   const { students } = useStudentsStore();
   // 現在選択している座席のid
@@ -93,8 +89,6 @@ const MainContents: React.FC<MainContentsProps> = ({
     <main className="max-w-7xl mx-auto px-4 pt-6">
       {/* 教室モード */}
       <Classroom
-        viewMode={viewMode}
-        setViewMode={setViewMode}
         onRandomize={handleRandomize}
         cols={cols}
         seats={seats}
@@ -103,9 +97,9 @@ const MainContents: React.FC<MainContentsProps> = ({
         onSeatClick={handleSeatClick}
       />
       {/* 生徒名簿モード */}
-      <StudentsManager viewMode={viewMode} setViewMode={setViewMode} />
+      <StudentsManager />
       {/* 履歴モード */}
-      <History viewMode={viewMode} setViewMode={setViewMode} setSeats={setSeats} setCols={setCols} setTotalSeats={setTotalSeats}/>
+      <History setSeats={setSeats} setCols={setCols} setTotalSeats={setTotalSeats} />
     </main>
   );
 };

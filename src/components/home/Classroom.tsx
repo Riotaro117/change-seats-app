@@ -8,12 +8,11 @@ import {
   Shuffle,
   Users,
 } from 'lucide-react';
-import type { Seat, Student, ViewMode } from '../../type';
+import type { Seat, Student } from '../../type';
 import { ADJACENT_OFFSETS } from '../../constants';
+import { useViewMode } from '../../modules/viewMode/viewMode.state';
 
 interface ClassroomProps {
-  viewMode: ViewMode;
-  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
   onRandomize: () => void;
   cols: number;
   seats: Seat[];
@@ -23,8 +22,6 @@ interface ClassroomProps {
 }
 
 const Classroom: React.FC<ClassroomProps> = ({
-  viewMode,
-  setViewMode,
   onRandomize,
   cols,
   seats,
@@ -32,6 +29,7 @@ const Classroom: React.FC<ClassroomProps> = ({
   isSelectedSeatId,
   onSeatClick,
 }) => {
+  const { viewMode, setViewMode } = useViewMode();
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
   const getConflictWarning = (seat: Seat): boolean => {
     // 座席に生徒がいないならfalseで終了

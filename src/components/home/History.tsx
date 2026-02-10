@@ -1,24 +1,18 @@
 import { ImageIcon, Trash2 } from 'lucide-react';
 import { useLayoutsStore } from '../../modules/layouts/layouts.state';
-import type { ClassroomLayout, Seat, ViewMode } from '../../type';
+import type { ClassroomLayout, Seat } from '../../type';
 import { layoutsRepository } from '../../modules/layouts/layouts.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
+import { useViewMode } from '../../modules/viewMode/viewMode.state';
 
 interface HistoryProps {
-  viewMode: ViewMode;
-  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
   setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
   setCols: React.Dispatch<React.SetStateAction<number>>;
   setTotalSeats: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const History: React.FC<HistoryProps> = ({
-  viewMode,
-  setViewMode,
-  setSeats,
-  setCols,
-  setTotalSeats,
-}) => {
+const History: React.FC<HistoryProps> = ({ setSeats, setCols, setTotalSeats }) => {
+  const { viewMode, setViewMode } = useViewMode();
   const { layouts, setLayouts } = useLayoutsStore();
   const { currentUser } = useCurrentUserStore();
   const loadLayout = async (layout: ClassroomLayout) => {

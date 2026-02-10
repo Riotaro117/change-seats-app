@@ -10,17 +10,14 @@ import {
   X,
 } from 'lucide-react';
 import { useStudentsStore } from '../../modules/students/students.state';
-import type { Student, ViewMode } from '../../type';
+import type { Student } from '../../type';
 import { useState } from 'react';
 import { studentsRepository } from '../../modules/students/students.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
+import { useViewMode } from '../../modules/viewMode/viewMode.state';
 
-interface StudentsManagerProps {
-  viewMode: ViewMode;
-  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
-}
-
-const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode }) => {
+const StudentsManager: React.FC = () => {
+  const { viewMode, setViewMode } = useViewMode();
   const { students, setStudents } = useStudentsStore();
   const { currentUser } = useCurrentUserStore();
   // 生徒名簿の名前入力欄の値

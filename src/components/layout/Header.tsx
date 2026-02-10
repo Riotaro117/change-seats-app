@@ -1,15 +1,15 @@
 import { ChevronDown, ChevronUp, LogOut } from 'lucide-react';
 import { authRepository } from '../../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
-import type { ViewMode } from '../../type';
+import { useViewMode } from '../../modules/viewMode/viewMode.state';
 
 interface HeaderProps {
-  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
   onResize: (size: number) => void;
   totalSeats: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ setViewMode, onResize, totalSeats }) => {
+const Header: React.FC<HeaderProps> = ({ onResize, totalSeats }) => {
+  const { setViewMode } = useViewMode();
   const { setUser } = useCurrentUserStore();
   const signout = async () => {
     await authRepository.signout();
