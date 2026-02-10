@@ -245,7 +245,7 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                   <div className="relative">
                     <button
                       onClick={() => setEditingId(editingId === student.id ? null : student.id)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                         student.badChemistryWith.length > 0
                           ? 'bg-red-100 text-red-700 border border-red-200'
                           : 'bg-white text-gray-400 border border-transparent hover:bg-gray-100'
@@ -258,7 +258,7 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
 
                   <button
                     onClick={() => handleRemove(student.id)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                    className="cursor-pointer p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -280,7 +280,7 @@ const StudentsManager: React.FC<StudentsManagerProps> = ({ viewMode, setViewMode
                             <button
                               key={other.id}
                               onClick={() => toggleBadChemistry(student, other.id)}
-                              className={`px-2 py-1 text-xs rounded-md border transition-all ${
+                              className={`cursor-pointer px-2 py-1 text-xs rounded-md border transition-all ${
                                 isSelected
                                   ? 'bg-red-500 text-white border-red-600 shadow-sm'
                                   : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-300'
