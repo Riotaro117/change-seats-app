@@ -38,12 +38,12 @@ export const layoutsRepository = {
     return data;
   },
   // 座席を削除する
-  async deleteLayout(userId: string, layout: ClassroomLayout) {
+  async deleteLayout(userId: string, id:string) {
     const { error } = await supabase
       .from('layouts')
       .delete()
       .eq('user_id', userId)
-      .eq('id', layout.id);
+      .eq('id', id);
     if (error != null) throw new Error(error.message);
   },
 };
