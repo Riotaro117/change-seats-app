@@ -4,12 +4,15 @@ import type { Seat, Student, ViewMode } from '../../type';
 import { useStudentsStore } from '../../modules/students/students.state';
 import { generateSeatingChart } from '../../utils/seatingLogic';
 import StudentsManager from './StudentsManager';
+import History from './History';
 
 interface MainContentsProps {
   seats: Seat[];
   setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
   totalSeats: number;
+  setTotalSeats: React.Dispatch<React.SetStateAction<number>>,
   cols: number;
+  setCols: React.Dispatch<React.SetStateAction<number>>;
   viewMode: ViewMode;
   setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
 }
@@ -18,7 +21,9 @@ const MainContents: React.FC<MainContentsProps> = ({
   seats,
   setSeats,
   totalSeats,
+  setTotalSeats,
   cols,
+  setCols,
   viewMode,
   setViewMode,
 }) => {
@@ -99,6 +104,8 @@ const MainContents: React.FC<MainContentsProps> = ({
       />
       {/* 生徒名簿モード */}
       <StudentsManager viewMode={viewMode} setViewMode={setViewMode} />
+      {/* 履歴モード */}
+      <History viewMode={viewMode} setViewMode={setViewMode} setSeats={setSeats} setCols={setCols} setTotalSeats={setTotalSeats}/>
     </main>
   );
 };
