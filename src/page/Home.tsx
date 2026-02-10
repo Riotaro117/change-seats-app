@@ -87,7 +87,9 @@ const Home = () => {
         seats={seats}
         setSeats={setSeats}
         totalSeats={totalSeats}
+        setTotalSeats={setTotalSeats}
         cols={cols}
+        setCols ={setCols}
         viewMode={viewMode}
         setViewMode={setViewMode}
       />
