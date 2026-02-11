@@ -92,6 +92,7 @@ const MainContents: React.FC<MainContentsProps> = ({
         onRandomize={handleRandomize}
         cols={cols}
         seats={seats}
+        totalSeats={totalSeats}
         studentMap={studentMap}
         isSelectedSeatId={isSelectedSeatId}
         onSeatClick={handleSeatClick}
