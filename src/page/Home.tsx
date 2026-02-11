@@ -89,7 +89,6 @@ const Home = () => {
         cols={cols}
         setCols ={setCols}
       />
-      {/* サイドボタン */}
       <SideButton onResize={handleResize} totalSeats={totalSeats} cols={cols} onCols={handleCols} />
     </div>
   );
