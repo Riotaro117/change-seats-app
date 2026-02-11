@@ -4,10 +4,10 @@ interface SideButtonProps {
   onResize: (size: number) => void;
   totalSeats: number;
   cols: number;
-  onCols: (col: number) => void;
+  setCols: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats, cols, onCols }) => {
+const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats, cols, setCols }) => {
   return (
     <div className="flex gap-[5px] fixed bottom-6 right-6 md:hidden">
       <div className="bg-white p-2 rounded-full shadow-xl border-2 border-wood-200 flex flex-col gap-2">
@@ -17,7 +17,7 @@ const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats, cols, onC
         >
           <ChevronUp />
         </button>
-        <span className="text-center font-bold text-xs">計 {totalSeats} 席</span>
+        <span className="text-center font-bold text-xs">{totalSeats} 席</span>
         <button
           onClick={() => onResize(Math.max(20, totalSeats - 1))}
           className="cursor-pointer p-2 bg-wood-100 rounded-full hover:bg-wood-200"
@@ -27,14 +27,14 @@ const SideButton: React.FC<SideButtonProps> = ({ onResize, totalSeats, cols, onC
       </div>
       <div className="bg-white p-2 rounded-full shadow-xl border-2 border-wood-200 flex flex-col gap-2">
         <button
-          onClick={() => onCols(Math.min(8, cols + 1))}
+          onClick={() => setCols(Math.min(8, cols + 1))}
           className="cursor-pointer p-2 bg-wood-100 rounded-full hover:bg-wood-200"
         >
           <ChevronUp />
         </button>
         <span className="text-center font-bold text-xs">{cols}列</span>
         <button
-          onClick={() => onCols(Math.max(6, cols - 1))}
+          onClick={() => setCols(Math.max(6, cols - 1))}
           className="cursor-pointer p-2 bg-wood-100 rounded-full hover:bg-wood-200"
         >
           <ChevronDown />
