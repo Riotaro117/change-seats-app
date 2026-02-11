@@ -4,6 +4,7 @@ import {
   Glasses,
   GripHorizontal,
   ImageIcon,
+  Printer,
   Save,
   Shuffle,
   Users,
@@ -15,6 +16,8 @@ import { layoutsRepository } from '../../modules/layouts/layouts.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useLayoutsStore } from '../../modules/layouts/layouts.state';
 import { useStudentsStore } from '../../modules/students/students.state';
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
 
 interface ClassroomProps {
   onRandomize: () => void;
@@ -97,6 +100,9 @@ const Classroom: React.FC<ClassroomProps> = ({
       alert('保存に失敗しました');
     }
   };
+  const contentRef = useRef<HTMLDivElement>(null)
+  const printCurrentLayout = useReactToPrint({contentRef})
+
   return (
     viewMode === 'classroom' && (
       <>
@@ -129,9 +135,16 @@ const Classroom: React.FC<ClassroomProps> = ({
             <Save className="w-5 h-5" />
             保存
           </button>
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
+            onClick={printCurrentLayout}
+          >
+            <Printer className="w-5 h-5" />
+            印刷
+          </button>
         </div>
         {/* 教室 */}
-        <div className="flex flex-col items-center w-full">
+        <div ref={contentRef} className="flex flex-col items-center w-full">
           <div className="bg-wood-700 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-wood-900">
             <h3 className="font-serif tracking-widest text-lg opacity-90">黒板</h3>
           </div>
