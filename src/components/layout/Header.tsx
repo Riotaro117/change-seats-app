@@ -6,11 +6,13 @@ import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 interface HeaderProps {
   onResize: (size: number) => void;
   totalSeats: number;
+  cols: number;
+  setCols: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Header: React.FC<HeaderProps> = ({ onResize, totalSeats }) => {
+const Header: React.FC<HeaderProps> = ({ onResize, totalSeats, cols, setCols }) => {
   const { setViewMode } = useViewModeStore();
-  const { setUser } = useCurrentUserStore();
+  const { currentUser, setUser } = useCurrentUserStore();
   const signout = async () => {
     await authRepository.signout();
     setUser(undefined);
@@ -23,7 +25,12 @@ const Header: React.FC<HeaderProps> = ({ onResize, totalSeats }) => {
           onClick={() => setViewMode('classroom')}
         >
           <div className="bg-orange-100 p-2 rounded-lg">🏫</div>
-          <h1 className="text-xl font-bold font-serif hidden sm:block">席替えしようよ</h1>
+          <div className="">
+            <h1 className="text-xl font-bold font-serif hidden sm:block">席替えしようよ</h1>
+            <p className="bg-orange-100 rounded-lg text-l font-bold font-serif text-center">
+              {currentUser!.user_metadata.name} 先生
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -31,14 +38,30 @@ const Header: React.FC<HeaderProps> = ({ onResize, totalSeats }) => {
             <span className="text-sm font-bold text-wood-600">座席数:</span>
             <button
               onClick={() => onResize(Math.max(20, totalSeats - 1))}
-              className="p-1 hover:bg-wood-200 rounded"
+              className="cursor-pointer p-1 hover:bg-wood-200 rounded"
             >
               <ChevronDown className="w-4 h-4" />
             </button>
             <span className="w-8 text-center font-mono">{totalSeats}</span>
             <button
-              onClick={() => onResize(Math.min(40, totalSeats + 1))}
-              className="p-1 hover:bg-wood-200 rounded"
+              onClick={() => onResize(Math.min(45, totalSeats + 1))}
+              className="cursor-pointer p-1 hover:bg-wood-200 rounded"
+            >
+              <ChevronUp className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="hidden md:flex items-center gap-2 mr-4 bg-wood-50 px-3 py-1 rounded-lg border border-wood-100">
+            <span className="text-sm font-bold text-wood-600">列数:</span>
+            <button
+              onClick={() => setCols(Math.max(6, cols - 1))}
+              className="cursor-pointer p-1 hover:bg-wood-200 rounded"
+            >
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <span className="w-8 text-center font-mono">{cols}</span>
+            <button
+              onClick={() => setCols(Math.min(8, cols + 1))}
+              className="cursor-pointer p-1 hover:bg-wood-200 rounded"
             >
               <ChevronUp className="w-4 h-4" />
             </button>
