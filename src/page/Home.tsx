@@ -74,22 +74,18 @@ const Home = () => {
     setSeats(newSeats);
   };
 
-  const handleCols = (col: number) => {
-    setCols(col);
-  };
-
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
-      <Header onResize={handleResize} totalSeats={totalSeats} />
+      <Header onResize={handleResize} totalSeats={totalSeats} cols={cols} setCols={setCols}/>
       <MainContents
         seats={seats}
         setSeats={setSeats}
         totalSeats={totalSeats}
         setTotalSeats={setTotalSeats}
         cols={cols}
-        setCols ={setCols}
+        setCols={setCols}
       />
-      <SideButton onResize={handleResize} totalSeats={totalSeats} cols={cols} onCols={handleCols} />
+      <SideButton onResize={handleResize} totalSeats={totalSeats} cols={cols} setCols={setCols} />
     </div>
   );
 };
