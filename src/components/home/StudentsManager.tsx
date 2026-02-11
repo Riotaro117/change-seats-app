@@ -124,7 +124,11 @@ const StudentsManager: React.FC = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-2xl font-bold text-wood-800 font-serif">生徒名簿</h2>
-              <p className="text-wood-500 text-sm">現在の人数: {students.length}人</p>
+              <p className="text-wood-500 text-sm">
+                現在の人数: 合計 {students.length}人（男子{' '}
+                {students.filter((s) => s.gender === 'boy').length}人、女子{' '}
+                {students.filter((s) => s.gender === 'girl').length}人）
+              </p>
             </div>
             <button
               onClick={() => setViewMode('classroom')}
