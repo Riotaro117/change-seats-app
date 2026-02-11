@@ -8,16 +8,19 @@ import {
   Shuffle,
   Users,
 } from 'lucide-react';
-import type { Seat, Student } from '../../type';
+import type { ClassroomLayout, Seat, Student } from '../../type';
 import { ADJACENT_OFFSETS } from '../../constants';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 import { layoutsRepository } from '../../modules/layouts/layouts.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
+import { useLayoutsStore } from '../../modules/layouts/layouts.state';
+import { useStudentsStore } from '../../modules/students/students.state';
 
 interface ClassroomProps {
   onRandomize: () => void;
   cols: number;
   seats: Seat[];
+  totalSeats: number;
   studentMap: Map<string, Student>;
   isSelectedSeatId: string | null;
   onSeatClick: (seatId: string) => void;
@@ -27,12 +30,15 @@ const Classroom: React.FC<ClassroomProps> = ({
   onRandomize,
   cols,
   seats,
+  totalSeats,
   studentMap,
   isSelectedSeatId,
   onSeatClick,
 }) => {
   const { viewMode, setViewMode } = useViewModeStore();
-  const {currentUser}= useCurrentUserStore()
+  const { students } = useStudentsStore();
+  const { currentUser } = useCurrentUserStore();
+  const { setLayouts } = useLayoutsStore();
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
   const getConflictWarning = (seat: Seat): boolean => {
     // 座席に生徒がいないならfalseで終了
@@ -67,7 +73,8 @@ const Classroom: React.FC<ClassroomProps> = ({
     // 何も違反がない場合はfalse
     return false;
   };
-  const saveCurrentLayout = async() => {
+  const saveCurrentLayout = async () => {
+    // promptで保存する名前を定義する
     const nameLayout = prompt(
       '保存する名前を入力してください（例: 4月の席替え）',
       `${new Date().getMonth() + 1}月の席替え`,
@@ -75,11 +82,19 @@ const Classroom: React.FC<ClassroomProps> = ({
     if (!nameLayout) return;
 
     try {
-      await layoutsRepository.createLayout()
-      
+      const layout: Omit<ClassroomLayout, 'id'> = {
+        name: nameLayout,
+        date: new Date().toLocaleDateString(),
+        rows: Math.ceil(totalSeats / cols),
+        cols,
+        seats,
+        students,
+      };
+      const createdLayout = await layoutsRepository.createLayout(currentUser!.id, layout);
+      setLayouts((prev) => [...prev, createdLayout]);
     } catch (error) {
       console.error(error);
-      alert("保存に失敗しました")
+      alert('保存に失敗しました');
     }
   };
   return (
