@@ -27,8 +27,8 @@ const Signup = () => {
         <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
           🏫
         </div>
-        <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">席替えしようよ</h1>
-        <p className="text-wood-500 mb-8">毎月の席替えを保存できる教室席替えアプリ</p>
+        <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
+        <p className="text-wood-500 mb-8">-配慮できる席替えアプリ-</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
