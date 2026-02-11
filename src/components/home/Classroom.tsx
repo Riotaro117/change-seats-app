@@ -17,7 +17,7 @@ import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useLayoutsStore } from '../../modules/layouts/layouts.state';
 import { useStudentsStore } from '../../modules/students/students.state';
 import { useReactToPrint } from 'react-to-print';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 interface ClassroomProps {
   onRandomize: () => void;
@@ -100,8 +100,19 @@ const Classroom: React.FC<ClassroomProps> = ({
       alert('保存に失敗しました');
     }
   };
-  const contentRef = useRef<HTMLDivElement>(null)
-  const printCurrentLayout = useReactToPrint({contentRef})
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isPrinted, setIsPrinted] = useState(false);
+  const printCurrentLayout = useReactToPrint({
+    contentRef,
+    onBeforePrint: async () => {
+      setIsPrinted(true);
+      // DOMの更新が完了後に印刷画面へ進む
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    },
+    onAfterPrint: () => {
+      setIsPrinted(false);
+    },
+  });
 
   return (
     viewMode === 'classroom' && (
@@ -210,7 +221,7 @@ const Classroom: React.FC<ClassroomProps> = ({
                     <>
                       <div className="flex items-center gap-1 mb-1">
                         {/* 前列配慮のある生徒の場合のスタイル */}
-                        {student.needsFrontRow && (
+                        {student.needsFrontRow && !isPrinted && (
                           <Glasses
                             className={`w-3 h-3 ${hasConflict ? 'text-red-500' : 'text-wood-700'}`}
                           />
