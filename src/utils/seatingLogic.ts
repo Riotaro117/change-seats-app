@@ -22,7 +22,7 @@ function shuffle<T>(array: T[]): T[] {
  * 絶対にしてほしくない違反のチェック→後に高得点にする（前列配慮、相性が悪い同士）
  */
 function countHardConflicts(
-  assignments: (string | null)[], // 全体の座席配置のこと
+  assignments: Map<number, string | null>, // 全体の座席配置のこと
   studentsMap: Map<string, Student>, // Mapを使うとfindせず高速アクセス可能
   rows: number,
   cols: number,
@@ -30,9 +30,9 @@ function countHardConflicts(
   // スコアの設定
   let conflicts = 0;
   // 全席を一つずつチェック
-  for (let i = 0; i < assignments.length; i++) {
+  for (let i = 0; i < assignments.size; i++) {
     // 空席はスキップして続行
-    const studentId = assignments[i];
+    const studentId = assignments.get(i);
     if (!studentId) continue;
     const student = studentsMap.get(studentId); // 座席のidから生徒情報を取得
     if (!student) continue;
@@ -56,7 +56,7 @@ function countHardConflicts(
         // 2次元→1次元に変換、１行にcols個並んでいるなら、何行分スキップしたか*cols＋その行の何番目か
         const neighborIndex = nr * cols + nc;
         // 隣の人のidを取得
-        const neighborId = assignments[neighborIndex];
+        const neighborId = assignments.get(neighborIndex);
         if (neighborId) {
           if (student.badChemistryWith.includes(neighborId)) conflicts++;
           // お互いに相性が悪いなら二重チェックになるけど、加点したままで良い
@@ -72,7 +72,7 @@ function countHardConflicts(
  * 隣同士が同じ性別か確認するゆるいチェック→得点は低めで良い
  */
 function countGenderConflicts(
-  assignments: (string | null)[], // ()で囲むこと忘れがち
+  assignments: Map<number, string | null>, // ()で囲むこと忘れがち
   studentsMap: Map<string, Student>,
   rows: number,
   cols: number,
@@ -87,8 +87,8 @@ function countGenderConflicts(
       const idx = r * cols + c;
       const nextidx = r * cols + (c + 1);
       // 座席に現在の生徒idと隣の生徒情idを定義
-      const studentId = assignments[idx];
-      const nextStudentId = assignments[nextidx];
+      const studentId = assignments.get(idx);
+      const nextStudentId = assignments.get(nextidx);
       // 隣同士生徒がいるのであれば
       if (studentId && nextStudentId) {
         // 現在と隣の生徒を取得
@@ -126,6 +126,7 @@ export const generateSeatingChart = (
   const enabledIndices = enabledSeats.map((seat) => seat.row * seat.col);
 
   // if (availableSeatCount < students.length) throw new Error('使用可能座席数が生徒数より少ないです');
+  if (enabledIndices.length < students.length) throw new Error();
 
   // 生徒のidと情報をキーとバリューで持つ（高速アクセス用）
   const studentMap = new Map(students.map((s) => [s.id, s]));
@@ -201,7 +202,7 @@ export const generateSeatingChart = (
     // シャッフルした残りの座席に一人ずつ残っている生徒のidを振っていく
     shuffleRemainingIndices.forEach((idx) => {
       if (shuffleBackStudents.length > 0) {
-        assignments[idx] = shuffleBackStudents.pop()!.id;
+        assignments.set(idx, shuffleBackStudents.pop()!.id);
       }
     });
 
@@ -215,18 +216,19 @@ export const generateSeatingChart = (
       // 現在のスコアを最小のスコアにして考える
       minScore = score;
       // 現在の座席配置をベスト配置にコピーする
-      bestAssignments = [...assignments];
+      bestAssignments = new Map(assignments);
       // 0点が出たら500回せずその時点で席替えを終える
       if (minScore === 0) break;
     }
   }
 
-  // ベスト配置をSeat型に変換（studentIdとidxを取り出してバリューに充てる）
-  const finalSeats: Seat[] = bestAssignments.map((studentId, idx) => ({
+  // ベスト配置をMap型からSeat型（配列）に変換
+  const finalSeats: Seat[] = Array.from(bestAssignments).map(([idx, studentId]) => ({
     id: `seat-${Math.floor(idx / cols)}-${idx % cols}`,
     row: Math.floor(idx / cols),
     col: idx % cols,
     studentId,
+    isDisabled: true,
   }));
   console.log(finalSeats.map((s) => s.studentId));
 
