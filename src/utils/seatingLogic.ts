@@ -113,9 +113,19 @@ function countGenderConflicts(
 制約をもとに席替えをし、点数をつける。
 その点数が一番低いものをベストな席替えとして出力する
  */
-export const generateSeatingChart = (rows: number, cols: number, students: Student[]): Seat[] => {
+export const generateSeatingChart = (
+  seats: Seat[],
+  rows: number,
+  cols: number,
+  students: Student[],
+): Seat[] => {
   // 総座席数
-  const totalSeats = rows * cols;
+  // const totalSeats = rows * cols;
+  // 席替えで利用できる座席を定義する
+  const enabledSeats = seats.filter((seat) => !seat.isDisabled);
+  const enabledIndices = enabledSeats.map((seat) => seat.row * seat.col);
+
+  // if (availableSeatCount < students.length) throw new Error('使用可能座席数が生徒数より少ないです');
 
   // 生徒のidと情報をキーとバリューで持つ（高速アクセス用）
   const studentMap = new Map(students.map((s) => [s.id, s]));
@@ -131,8 +141,14 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     for (let c = 0; c < cols; c++) {
       // 1次元配列を指定
       const idx = r * cols + c;
-      // 0,1列目に優先座席を入れて、あとは通常席を入れる
+
+      // 使用不可の座席であればスキップする
+      // if (disabledSeatIndices.includes(idx)) continue;
+      // const disabledSet = new Set(enabledIndices);
+      // if (disabledSet.has(idx)) continue;
+
       if (r < 2) {
+        // 0,1列目に優先座席を入れて、あとは通常席を入れる
         frontRowIndices.push(idx);
       } else {
         backRowIndices.push(idx);
@@ -140,8 +156,8 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     }
   }
 
-  // 席替え後に一番スコアの良かった席配列を入れるので、nullにしておく
-  let bestAssignments: (string | null)[] = new Array(totalSeats).fill(null);
+  // 席替え後に一番スコアの良かった席配列を入れる
+  let bestAssignments = new Map<number, string | null>();
   // 無限大にしておくことで、後にスコアが存在するかどうかで使える
   let minScore = Infinity;
 
@@ -149,8 +165,13 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
   const ATTEMPTS = 500;
   // 500回繰り返す
   for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
-    // これからの処理で座らせていく座席のこと。はじめは空席のnullでいっぱいにしておく
-    const assignments: (string | null)[] = new Array(totalSeats).fill(null);
+    // これからの処理で座らせていく座席のこと。
+    const assignments = new Map<number, string | null>();
+
+    // 使用不可の座席をマークしておく
+    // for (const idx of disabledSeatIndices) {
+    //   assignments[idx] = null;
+    // }
 
     // 前列の座席のインデックスのみシャッフル
     const shuffleFrontRowIndices = shuffle(frontRowIndices);
@@ -162,7 +183,7 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     shuffleFrontRowIndices.forEach((idx) => {
       // 前列へ行く生徒がいるなら、その生徒のidを取り出して、配置する
       if (frontToPlace.length > 0) {
-        assignments[idx] = frontToPlace.pop()!.id;
+        assignments.set(idx, frontToPlace.pop()!.id);
       }
     });
 
@@ -170,7 +191,7 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     const backToPlace = [...regularStudents, ...frontToPlace];
     // 前列の生徒がいないnullの座席のインデックスと後ろの座席のインデックスを残っている座席のインデックスとする
     const remainingIndices = [
-      ...shuffleFrontRowIndices.filter((idx) => assignments[idx] === null),
+      ...shuffleFrontRowIndices.filter((idx) => assignments.get(idx) === null),
       ...backRowIndices,
     ];
     // 残っている座席のインデックスをシャッフルする
@@ -207,6 +228,7 @@ export const generateSeatingChart = (rows: number, cols: number, students: Stude
     col: idx % cols,
     studentId,
   }));
+  console.log(finalSeats.map((s) => s.studentId));
 
   //ベストな席を出力する
   return finalSeats;
