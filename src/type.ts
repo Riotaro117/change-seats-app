@@ -17,6 +17,7 @@ export type Seat = {
   row: number;
   col: number;
   studentId: string | null; // 座席に座っている生徒、空席ならnull
+  isDisabled: boolean; // 座席が利用可能か
 };
 
 // 上記のlayoutsでrowsとcolsのtypeをint4にしているのは、整数型。int2は小さい、int8は大きすぎ
