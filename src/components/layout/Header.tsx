@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ onResize, totalSeats, cols, setCols }) 
           <div className="">
             <h1 className="text-xl font-bold font-serif hidden sm:block">
               Seat Tree
-              <span className='text-[10px]'>-配慮できる席替えアプリ-</span>
+              <span className="text-[10px]">-配慮できる席替えアプリ-</span>
             </h1>
             <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
               {currentUser!.user_metadata.name} 先生
@@ -70,7 +70,10 @@ const Header: React.FC<HeaderProps> = ({ onResize, totalSeats, cols, setCols }) 
             </button>
           </div>
 
-          <button onClick={signout} className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none hidden sm:inline-flex">
+          <button
+            onClick={signout}
+            className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none hidden sm:inline-flex"
+          >
             ログアウト
           </button>
           {/* レスポンシブで表示切り替え */}
