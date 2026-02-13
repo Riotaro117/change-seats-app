@@ -33,4 +33,4 @@ export type ClassroomLayout = {
   students: Student[]; // 保存した生徒情報
 };
 
-export type ViewMode = 'classroom' | 'students' | 'history';
+export type ViewMode = 'classroom' | 'students' | 'history' | 'settings';
