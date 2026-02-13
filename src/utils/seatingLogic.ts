@@ -29,20 +29,21 @@ function countHardConflicts(
 ): number {
   // スコアの設定
   let conflicts = 0;
-  // 全席を一つずつチェック
-  for (let i = 0; i < assignments.size; i++) {
-    // 空席はスキップして続行
-    const studentId = assignments.get(i);
+  // 全席を一つずつチェック(rows * colsで全席)
+  for (const [idx, studentId] of assignments.entries()) {
+    // 生徒のIDが存在しないときはスキップ
     if (!studentId) continue;
-    const student = studentsMap.get(studentId); // 座席のidから生徒情報を取得
+    // 座席のidから生徒情報を取得
+    const student = studentsMap.get(studentId);
     if (!student) continue;
 
     // 現在座っている座席の位置情報
-    const r = Math.floor(i / cols);
-    const c = i % cols;
+    const r = Math.floor(idx / cols);
+    const c = idx % cols;
 
     // 1. 視力チェック、違反なら加点
-    if (student.needsFrontRow && r > 1) {
+    const FRONT_ROWS = 2;
+    if (student.needsFrontRow && r >= FRONT_ROWS) {
       conflicts++;
     }
     // 2. 相性が悪いチェック
@@ -82,7 +83,7 @@ function countGenderConflicts(
   // 二重のforは外側実行→内側全部実行→外側→内側全部実行の繰り返し
   for (let r = 0; r < rows; r++) {
     // 水平方向のチェック
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols - 1; c++) {
       // 座席のindexと右隣の座席のindexを定義
       const idx = r * cols + c;
       const nextidx = r * cols + (c + 1);
@@ -170,11 +171,6 @@ export const generateSeatingChart = (
     // これからの処理で座らせていく座席のこと。
     const assignments = new Map<number, string | null>();
 
-    // 使用不可の座席をマークしておく
-    // for (const idx of disabledSeatIndices) {
-    //   assignments[idx] = null;
-    // }
-
     // 前列の座席のインデックスのみシャッフル
     const shuffleFrontRowIndices = shuffle(frontRowIndices);
     // 前列の生徒のみシャッフル
@@ -193,7 +189,7 @@ export const generateSeatingChart = (
     const backToPlace = [...regularStudents, ...frontToPlace];
     // 前列の生徒がいないnullの座席のインデックスと後ろの座席のインデックスを残っている座席のインデックスとする
     const remainingIndices = [
-      ...shuffleFrontRowIndices.filter((idx) => assignments.get(idx) === null),
+      ...shuffleFrontRowIndices.filter((idx) => !assignments.has(idx)),
       ...backRowIndices,
     ];
     // 残っている座席のインデックスをシャッフルする
@@ -224,14 +220,13 @@ export const generateSeatingChart = (
   }
 
   // ベスト配置をMap型からSeat型（配列）に変換
-  const finalSeats: Seat[] = Array.from(bestAssignments).map(([idx, studentId]) => ({
-    id: `seat-${Math.floor(idx / cols)}-${idx % cols}`,
-    row: Math.floor(idx / cols),
-    col: idx % cols,
-    studentId,
-    isDisabled: true,
-  }));
-  console.log(finalSeats.map((s) => s.studentId));
+  const finalSeats: Seat[] = seats.map((seat) => {
+    const idx = seat.row * cols + seat.col;
+    return {
+      ...seat,
+      studentId: bestAssignments.get(idx) ?? null,
+    };
+  });
 
   //ベストな席を出力する
   return finalSeats;
