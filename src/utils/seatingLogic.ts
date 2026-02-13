@@ -125,6 +125,8 @@ export const generateSeatingChart = (
   const enabledSeats = seats.filter((seat) => !seat.isDisabled);
   // 1次元配列に戻す
   const enabledIndices = enabledSeats.map((seat) => seat.row * cols + seat.col);
+  // 使用できる座席のインデックスをセットする
+  const enabledSet = new Set(enabledIndices);
 
   // if (availableSeatCount < students.length) throw new Error('使用可能座席数が生徒数より少ないです');
   if (enabledIndices.length < students.length) throw new Error();
@@ -145,9 +147,7 @@ export const generateSeatingChart = (
       const idx = r * cols + c;
 
       // 使用不可の座席であればスキップする
-      // if (disabledSeatIndices.includes(idx)) continue;
-      // const disabledSet = new Set(enabledIndices);
-      // if (disabledSet.has(idx)) continue;
+      if (!enabledSet.has(idx)) continue;
 
       if (r < 2) {
         // 0,1列目に優先座席を入れて、あとは通常席を入れる
