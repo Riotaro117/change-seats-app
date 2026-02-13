@@ -69,6 +69,7 @@ const Home = () => {
       row: Math.floor(i / cols),
       col: i % cols,
       studentId: null, // 初めは誰も座っていない
+      isDisabled: false,
     }));
     // 座席情報の更新
     setSeats(newSeats);
@@ -76,7 +77,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
-      <Header onResize={handleResize} totalSeats={totalSeats} cols={cols} setCols={setCols}/>
+      <Header onResize={handleResize} totalSeats={totalSeats} cols={cols} setCols={setCols} />
       <MainContents
         seats={seats}
         setSeats={setSeats}

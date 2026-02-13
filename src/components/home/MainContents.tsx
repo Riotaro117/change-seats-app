@@ -69,7 +69,7 @@ const MainContents: React.FC<MainContentsProps> = ({
     // rowsを定義する
     const rows = Math.ceil(totalSeats / cols);
     // 新しい座席を制約を元にして定義する
-    const newSeats = generateSeatingChart(rows, cols, students);
+    const newSeats = generateSeatingChart(seats, rows, cols, students);
     // 総座席数より、生徒が座っている座席が少ない場合
     if (newSeats.length < totalSeats) {
       // 生徒が座っていない座席に繰り返し処理でseatのstudentIdにnullを入れていく
@@ -79,6 +79,7 @@ const MainContents: React.FC<MainContentsProps> = ({
           row: Math.floor(i / cols),
           col: i % cols,
           studentId: null,
+          isDisabled: false,
         });
       }
     }
