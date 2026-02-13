@@ -7,6 +7,7 @@ import {
   Trash2,
   User,
   Users,
+  Users2,
   X,
 } from 'lucide-react';
 import { useStudentsStore } from '../../modules/students/students.state';
@@ -123,8 +124,11 @@ const StudentsManager: React.FC = () => {
         <div className="bg-white rounded-3xl shadow-xl border-4 border-wood-200 p-6 h-full flex flex-col max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-wood-800 font-serif">生徒名簿</h2>
-              <p className="text-wood-500 text-sm">
+              <h2 className="text-2xl font-bold font-serif flex items-center gap-2">
+                <Users className="w-6 h-6 text-wood-500" />
+                生徒名簿
+              </h2>
+              <p className="text-wood-500 text-sm mt-1">
                 現在の人数: 合計 {students.length}人（男子{' '}
                 {students.filter((s) => s.gender === 'boy').length}人、女子{' '}
                 {students.filter((s) => s.gender === 'girl').length}人）
