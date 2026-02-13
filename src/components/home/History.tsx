@@ -40,7 +40,7 @@ const History: React.FC<HistoryProps> = ({ setSeats, setCols, setTotalSeats }) =
           <div>
             <h2 className="text-2xl font-bold font-serif flex items-center gap-2">
               <ImageIcon className="w-6 h-6 text-wood-500" />
-              アルバム（履歴）
+              履歴
             </h2>
             <p className="text-wood-500 text-sm mt-1">保存した座席表（最大20件）</p>
           </div>
