@@ -123,7 +123,8 @@ export const generateSeatingChart = (
   // const totalSeats = rows * cols;
   // 席替えで利用できる座席を定義する
   const enabledSeats = seats.filter((seat) => !seat.isDisabled);
-  const enabledIndices = enabledSeats.map((seat) => seat.row * seat.col);
+  // 1次元配列に戻す
+  const enabledIndices = enabledSeats.map((seat) => seat.row * cols + seat.col);
 
   // if (availableSeatCount < students.length) throw new Error('使用可能座席数が生徒数より少ないです');
   if (enabledIndices.length < students.length) throw new Error();
