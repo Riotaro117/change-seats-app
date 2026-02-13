@@ -6,6 +6,7 @@ import {
   ImageIcon,
   Printer,
   Save,
+  Settings,
   Shuffle,
   Users,
 } from 'lucide-react';
@@ -100,6 +101,7 @@ const Classroom: React.FC<ClassroomProps> = ({
       alert('保存に失敗しました');
     }
   };
+  // 印刷ボタン
   const contentRef = useRef<HTMLDivElement>(null);
   const [isPrinted, setIsPrinted] = useState(false);
   const printCurrentLayout = useReactToPrint({
@@ -127,17 +129,24 @@ const Classroom: React.FC<ClassroomProps> = ({
           </button>
           <button
             className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
+            onClick={() => setViewMode('settings')}
+          >
+            <Settings className="w-5 h-5" />
+            座席設定
+          </button>
+          <button
+            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
             onClick={() => setViewMode('students')}
           >
             <Users className="w-5 h-5" />
-            名簿・条件
+            生徒名簿
           </button>
           <button
             className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
             onClick={() => setViewMode('history')}
           >
             <ImageIcon className="w-5 h-5" />
-            アルバム
+            履歴
           </button>
           <button
             className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
