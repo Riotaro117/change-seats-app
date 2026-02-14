@@ -51,14 +51,18 @@ const MainContents: React.FC<MainContentsProps> = ({
   };
 
   // 座席をクリックしたら選択済みにする
-  const handleSeatClick = (seatId: string) => {
+  const handleSeatClick = (seat: Seat) => {
+    if (seat.isDisabled) {
+      alert('使用できない座席は選択できません');
+      return;
+    }
     // 選択済みの座席がない場合
     if (!isSelectedSeatId) {
-      setIsSelectedSeatId(seatId);
+      setIsSelectedSeatId(seat.id);
     } else {
       // 選択済みがある場合、選んでいない座席なら入れ替え
-      if (isSelectedSeatId !== seatId) {
-        handleSwap(isSelectedSeatId, seatId);
+      if (isSelectedSeatId !== seat.id) {
+        handleSwap(isSelectedSeatId, seat.id);
       }
       // 既に選択済みなら外す
       setIsSelectedSeatId(null);
