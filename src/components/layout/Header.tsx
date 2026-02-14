@@ -4,13 +4,14 @@ import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 
 interface HeaderProps {
-  onResize: (size: number) => void;
+  onResizeSeats: (size: number) => void;
+  onResizeCols: (size: number, totalSeats: number) => void;
   totalSeats: number;
   cols: number;
   setCols: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Header: React.FC<HeaderProps> = ({ onResize, totalSeats, cols, setCols }) => {
+const Header: React.FC<HeaderProps> = ({ onResizeSeats,onResizeCols, totalSeats, cols }) => {
   const { setViewMode } = useViewModeStore();
   const { currentUser, setUser } = useCurrentUserStore();
   const signout = async () => {
@@ -40,14 +41,14 @@ const Header: React.FC<HeaderProps> = ({ onResize, totalSeats, cols, setCols }) 
           <div className="hidden md:flex items-center gap-2 mr-4 bg-wood-50 px-3 py-1 rounded-lg border border-wood-100">
             <span className="text-sm font-bold text-wood-600">座席数:</span>
             <button
-              onClick={() => onResize(Math.max(20, totalSeats - 1))}
+              onClick={() => onResizeSeats(Math.max(24, totalSeats - 1))}
               className="cursor-pointer p-1 hover:bg-wood-200 rounded"
             >
               <ChevronDown className="w-4 h-4" />
             </button>
             <span className="w-8 text-center font-mono">{totalSeats}</span>
             <button
-              onClick={() => onResize(Math.min(45, totalSeats + 1))}
+              onClick={() => onResizeSeats(Math.min(48, totalSeats + 1))}
               className="cursor-pointer p-1 hover:bg-wood-200 rounded"
             >
               <ChevronUp className="w-4 h-4" />
@@ -56,14 +57,14 @@ const Header: React.FC<HeaderProps> = ({ onResize, totalSeats, cols, setCols }) 
           <div className="hidden md:flex items-center gap-2 mr-4 bg-wood-50 px-3 py-1 rounded-lg border border-wood-100">
             <span className="text-sm font-bold text-wood-600">列数:</span>
             <button
-              onClick={() => setCols(Math.max(6, cols - 1))}
+              onClick={() => onResizeCols(Math.max(4, cols - 1),totalSeats)}
               className="cursor-pointer p-1 hover:bg-wood-200 rounded"
             >
               <ChevronDown className="w-4 h-4" />
             </button>
             <span className="w-8 text-center font-mono">{cols}</span>
             <button
-              onClick={() => setCols(Math.min(8, cols + 1))}
+              onClick={() => onResizeCols(Math.min(8, cols + 1),totalSeats)}
               className="cursor-pointer p-1 hover:bg-wood-200 rounded"
             >
               <ChevronUp className="w-4 h-4" />
