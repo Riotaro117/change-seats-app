@@ -5,6 +5,7 @@ import { useStudentsStore } from '../../modules/students/students.state';
 import { generateSeatingChart } from '../../utils/seatingLogic';
 import StudentsManager from './StudentsManager';
 import History from './History';
+import Settings from './Settings';
 
 interface MainContentsProps {
   seats: Seat[];
@@ -98,6 +99,8 @@ const MainContents: React.FC<MainContentsProps> = ({
         isSelectedSeatId={isSelectedSeatId}
         onSeatClick={handleSeatClick}
       />
+      {/* 座席設定モード */}
+      <Settings cols={cols} seats={seats} setSeats={setSeats} />
       {/* 生徒名簿モード */}
       <StudentsManager />
       {/* 履歴モード */}
