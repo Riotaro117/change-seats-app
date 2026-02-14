@@ -25,6 +25,7 @@ interface ClassroomProps {
   onRandomize: () => void;
   cols: number;
   seats: Seat[];
+  setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
   totalSeats: number;
   studentMap: Map<string, Student>;
   isSelectedSeatId: string | null;
@@ -35,6 +36,7 @@ const Classroom: React.FC<ClassroomProps> = ({
   onRandomize,
   cols,
   seats,
+  setSeats,
   totalSeats,
   studentMap,
   isSelectedSeatId,
@@ -102,6 +104,15 @@ const Classroom: React.FC<ClassroomProps> = ({
       alert('保存に失敗しました');
     }
   };
+
+  // 設定画面へ遷移
+  const transitionSetting = () => {
+    if (window.confirm('現在の座席配置は失われます。座席設定画面に遷移しますか？')) {
+      setSeats([]);
+      setViewMode('settings');
+    }
+  };
+
   // 印刷ボタン
   const contentRef = useRef<HTMLDivElement>(null);
   const [isPrinted, setIsPrinted] = useState(false);
@@ -130,7 +141,7 @@ const Classroom: React.FC<ClassroomProps> = ({
           </button>
           <button
             className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-            onClick={() => setViewMode('settings')}
+            onClick={transitionSetting}
           >
             <Settings className="w-5 h-5" />
             座席設定
