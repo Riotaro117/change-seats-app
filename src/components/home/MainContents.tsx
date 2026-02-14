@@ -14,6 +14,7 @@ interface MainContentsProps {
   setTotalSeats: React.Dispatch<React.SetStateAction<number>>;
   cols: number;
   setCols: React.Dispatch<React.SetStateAction<number>>;
+  setIsLoadingData: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MainContents: React.FC<MainContentsProps> = ({
@@ -104,6 +105,7 @@ const MainContents: React.FC<MainContentsProps> = ({
         onRandomize={handleRandomize}
         cols={cols}
         seats={seats}
+        setSeats={setSeats}
         totalSeats={totalSeats}
         studentMap={studentMap}
         isSelectedSeatId={isSelectedSeatId}
