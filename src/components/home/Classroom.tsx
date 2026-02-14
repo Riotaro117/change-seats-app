@@ -28,7 +28,7 @@ interface ClassroomProps {
   totalSeats: number;
   studentMap: Map<string, Student>;
   isSelectedSeatId: string | null;
-  onSeatClick: (seatId: string) => void;
+  onSeatClick: (seat: Seat) => void;
 }
 
 const Classroom: React.FC<ClassroomProps> = ({
@@ -201,7 +201,7 @@ const Classroom: React.FC<ClassroomProps> = ({
               return (
                 <div
                   key={seat.id}
-                  onClick={() => onSeatClick(seat.id)}
+                  onClick={() => onSeatClick(seat)}
                   className={`
                 relative aspect-[4/3] rounded-xl flex flex-col items-center justify-center p-2 cursor-pointer
                 transition-all duration-300 transform border-b-4
