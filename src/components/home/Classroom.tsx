@@ -9,6 +9,7 @@ import {
   Settings,
   Shuffle,
   Users,
+  X,
 } from 'lucide-react';
 import type { ClassroomLayout, Seat, Student } from '../../type';
 import { ADJACENT_OFFSETS } from '../../constants';
@@ -211,12 +212,13 @@ const Classroom: React.FC<ClassroomProps> = ({
                     : 'hover:-translate-y-1 hover:shadow-lg'
                 }
                 ${
-                  // 生徒が存在しない時のスタイル、制約違反があったらスタイルを変える(後で)！！！！！
-                  !student
-                    ? 'bg-wood-100 border-wood-200 border-dashed'
-                    : hasConflict
-                      ? 'bg-red-50 border-red-300'
-                      : 'bg-orange-200 border-wood-400'
+                  seat.isDisabled
+                    ? 'bg-emerald-100 border-emerald-200 border-dashed'
+                    : !student
+                      ? 'bg-wood-100 border-wood-200 border-dashed'
+                      : hasConflict
+                        ? 'bg-red-50 border-red-300'
+                        : 'bg-orange-200 border-wood-400'
                 }
               `}
                 >
@@ -226,7 +228,11 @@ const Classroom: React.FC<ClassroomProps> = ({
                   )}
 
                   {/* 生徒の有無でスタイル変更 */}
-                  {student ? (
+                  {seat.isDisabled ? (
+                    <span className="text-emerald-300 text-xs font-medium">
+                      <X className="w-3 h-3 sm:w-6 h-6" />
+                    </span>
+                  ) : student ? (
                     <>
                       <div className="flex items-center gap-1 mb-1">
                         {/* 前列配慮のある生徒の場合のスタイル */}
