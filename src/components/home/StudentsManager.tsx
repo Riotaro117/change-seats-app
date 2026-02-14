@@ -7,7 +7,6 @@ import {
   Trash2,
   User,
   Users,
-  Users2,
   X,
 } from 'lucide-react';
 import { useStudentsStore } from '../../modules/students/students.state';
