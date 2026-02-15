@@ -27,7 +27,15 @@ const Header: React.FC = () => {
               <span className="text-[15px]">-配慮できる席替えアプリ-</span>
             </h1>
             <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
-              {currentUser!.user_metadata.name} 先生
+              {currentUser!.user_metadata.name ? (
+                <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
+                  `${currentUser!.user_metadata.name}先生`
+                </p>
+              ) : (
+                <p className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center">
+                  本登録をしていません
+                </p>
+              )}
             </p>
           </div>
         </div>
