@@ -13,6 +13,11 @@ const Signin = () => {
   const signin = async () => {
     await authRepository.signin(email, password);
   };
+
+  const anonymouslySignin = async () => {
+    await authRepository.anonymouslySignin();
+  };
+
   // ログイン済みのユーザーの処理
   if (currentUser) return <Navigate replace to="/" />;
 
@@ -52,6 +57,12 @@ const Signin = () => {
             アカウントを新規作成
           </Link>
         </div>
+        <button
+          onClick={anonymouslySignin}
+          className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-lime-600 text-white hover:bg-lime-700 shadow-lime-800/20 w-full py-3 text-lg mt-10"
+        >
+          今すぐ試す
+        </button>
       </div>
     </div>
   );
