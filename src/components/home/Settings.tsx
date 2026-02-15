@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, SettingsIcon, X } from 'lucide-react';
+import { AlertTriangle, ChevronDown, ChevronUp, SettingsIcon, X } from 'lucide-react';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 import type { Seat } from '../../type';
 import { useStudentsStore } from '../../modules/students/students.state';
@@ -21,12 +21,13 @@ const Settings: React.FC<SettingProps> = ({
   setSeats,
 }) => {
   const { viewMode, setViewMode } = useViewModeStore();
-  const {students}= useStudentsStore()
+  const { students } = useStudentsStore();
   const onToggleDisable = (id: string) => {
     setSeats((prev) =>
       prev.map((seat) => (seat.id === id ? { ...seat, isDisabled: !seat.isDisabled } : seat)),
     );
   };
+  const enabledSeatsCount = seats.filter((seat) => seat.isDisabled === false).length;
   return (
     viewMode === 'settings' && (
       <div className="bg-white rounded-3xl shadow-xl border-4 border-wood-200 p-6 h-full flex flex-col max-w-4xl mx-auto">
@@ -89,7 +90,7 @@ const Settings: React.FC<SettingProps> = ({
         </div>
 
         <div className="flex flex-col items-center w-full">
-          <div className="bg-wood-700 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-wood-900">
+          <div className="bg-lime-600 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-lime-800">
             <h3 className="font-serif tracking-widest text-lg opacity-90">黒板</h3>
           </div>
 
@@ -124,10 +125,21 @@ const Settings: React.FC<SettingProps> = ({
           </div>
         </div>
         <div className=" bg-wood-50 px-3 py-1 rounded-lg border border-wood-100">
-          <span className="text-sm font-bold text-wood-600">利用できる席数:</span>
-          <span className="w-8 text-center font-mono">{seats.length}席</span>
-          <span className="text-sm font-bold text-wood-600">生徒の数:</span>
-          <span className="w-8 text-center font-mono">{students.length}人</span>
+          {enabledSeatsCount < students.length && (
+            <p className="text-red-500 text-m">
+              <AlertTriangle className="w-6 h-6" />
+              必ず、利用できる座席数が生徒の数以上になるようにして下さい。
+            </p>
+          )}
+
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-sm font-bold text-wood-600">利用できる席数:</span>
+            <span className="font-mono">{enabledSeatsCount}席</span>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-sm font-bold text-wood-600">生徒の数:</span>
+            <span className="font-mono">{students.length}人</span>
+          </div>
         </div>
       </div>
     )
