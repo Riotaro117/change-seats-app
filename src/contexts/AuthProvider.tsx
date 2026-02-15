@@ -13,16 +13,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   // 初回の信頼できるユーザーのみ読み込み
   useEffect(() => {
-    const getUser = async () => {
-      setIsLoading(true);
-      const currentUser = await authRepository.getCurrentUser();
-      setUser(currentUser);
-      setIsLoading(false);
-    };
-    getUser();
+    // const getUser = async () => {
+    //   setIsLoading(true);
+    //   const currentUser = await authRepository.getCurrentUser();
+    //   setUser(currentUser);
+    //   setIsLoading(false);
+    // };
+    // getUser();
 
     const unSubscribe = authRepository.stateChange((user) => {
       setUser(user ?? undefined);
+      setIsLoading(false)
     });
     return unSubscribe;
   }, []);
