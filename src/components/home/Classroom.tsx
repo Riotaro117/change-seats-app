@@ -107,7 +107,7 @@ const Classroom: React.FC<ClassroomProps> = ({
 
   // 設定画面へ遷移
   const transitionSetting = () => {
-    if (window.confirm('現在の座席配置は失われます。座席設定画面に遷移しますか？')) {
+    if (window.confirm('現在の配置は失われます。座席設定画面に遷移しますか？')) {
       setSeats([]);
       setViewMode('settings');
     }
@@ -177,7 +177,7 @@ const Classroom: React.FC<ClassroomProps> = ({
         </div>
         {/* 教室 */}
         <div ref={contentRef} className="flex flex-col items-center w-full">
-          <div className="bg-wood-700 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-wood-900">
+          <div className="bg-lime-600 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-lime-800">
             <h3 className="font-serif tracking-widest text-lg opacity-90">黒板</h3>
           </div>
 
