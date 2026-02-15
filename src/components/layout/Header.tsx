@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react';
 import { authRepository } from '../../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
+import iconSeatTree from '../assets/icon_seat_tree.png';
 
 const Header: React.FC = () => {
   const { setViewMode } = useViewModeStore();
@@ -17,7 +18,9 @@ const Header: React.FC = () => {
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => setViewMode('classroom')}
         >
-          <div className="bg-orange-100 p-2 rounded-lg">🏫</div>
+          <div className="w-15 h-15">
+            <img src={iconSeatTree} alt="Seat Tree" />
+          </div>
           <div className="">
             <h1 className="text-xl font-bold font-serif">
               Seat Tree
