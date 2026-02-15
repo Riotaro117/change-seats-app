@@ -15,6 +15,8 @@ interface MainContentsProps {
   cols: number;
   setCols: React.Dispatch<React.SetStateAction<number>>;
   setIsLoadingData: React.Dispatch<React.SetStateAction<boolean>>;
+  onResizeSeats: (size: number) => void;
+  onResizeCols: (size: number, totalSeats: number) => void;
 }
 
 const MainContents: React.FC<MainContentsProps> = ({
@@ -24,6 +26,8 @@ const MainContents: React.FC<MainContentsProps> = ({
   setTotalSeats,
   cols,
   setCols,
+  onResizeSeats,
+  onResizeCols
 }) => {
   const { students } = useStudentsStore();
   // 現在選択している座席のid
@@ -112,7 +116,14 @@ const MainContents: React.FC<MainContentsProps> = ({
         onSeatClick={handleSeatClick}
       />
       {/* 座席設定モード */}
-      <Settings cols={cols} seats={seats} setSeats={setSeats} />
+      <Settings
+        onResizeSeats={onResizeSeats}
+        onResizeCols={onResizeCols}
+        totalSeats={totalSeats}
+        cols={cols}
+        seats={seats}
+        setSeats={setSeats}
+      />
       {/* 生徒名簿モード */}
       <StudentsManager />
       {/* 履歴モード */}
