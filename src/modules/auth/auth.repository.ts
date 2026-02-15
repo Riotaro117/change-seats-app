@@ -33,6 +33,26 @@ export const authRepository = {
     };
   },
 
+  // ゲストログイン機能
+  async anonymouslySignin() {
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (data.user == null || error != null) throw new Error(error?.message);
+    return data;
+  },
+
+  //ゲストユーザーをメールユーザーにアップデート
+  async updateUser(email: string, password: string, name: string) {
+    const { data, error } = await supabase.auth.updateUser({
+      email,
+      password,
+      data: {
+        name,
+      },
+    });
+    if (data.user == null || error != null) throw new Error(error?.message);
+    return data;
+  },
+
   // ログイン、ログアウト、トークン更新などのリアルタイム変化を追従
   stateChange(onChange: (user: User | null) => void) {
     const {
