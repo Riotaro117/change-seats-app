@@ -7,7 +7,6 @@ import { studentsRepository } from '../modules/students/students.repository';
 import { layoutsRepository } from '../modules/layouts/layouts.repository';
 import { useLayoutsStore } from '../modules/layouts/layouts.state';
 import Header from '../components/layout/Header';
-import SideButton from '../components/ui/SideButton';
 import MainContents from '../components/home/MainContents';
 
 const Home = () => {
@@ -28,7 +27,7 @@ const Home = () => {
     if (!isLoading) {
       fetchData();
     }
-  }, []);
+  }, [seats]);
 
   // supabaseのデータ取得
   const fetchData = async () => {
@@ -49,16 +48,16 @@ const Home = () => {
       console.error('Error fetching data:', error);
       alert('データの読み込みに失敗しました');
     } finally {
-      // 最後の締め
       if (seats.length === 0) {
-        handleResize(30);
+        handleResizeSeats(30);
+        handleResizeCols(6, 30);
       }
       setIsLoadingData(false);
     }
   };
 
   // 総座席数が変わったときに教室の座席配置を作り直す関数
-  const handleResize = (size: number) => {
+  const handleResizeSeats = (size: number) => {
     // 総座席数の更新
     setTotalSeats(size);
     // 引数のsizeを元に新しい座席データを作成する
@@ -75,9 +74,21 @@ const Home = () => {
     setSeats(newSeats);
   };
 
+  const handleResizeCols = (size: number, totalSeats: number) => {
+    setCols(size);
+    const newSeats: Seat[] = Array.from({ length: totalSeats }, (_, i) => ({
+      id: `seat-${Math.floor(i / size)}-${i % size}`,
+      row: Math.floor(i / size),
+      col: i % size,
+      studentId: null,
+      isDisabled: false,
+    }));
+    setSeats(newSeats);
+  };
+
   return (
     <div className="min-h-screen bg-wood-50 text-wood-900 pb-20 font-sans">
-      <Header onResize={handleResize} totalSeats={totalSeats} cols={cols} setCols={setCols} />
+      <Header />
       <MainContents
         seats={seats}
         setSeats={setSeats}
@@ -85,8 +96,10 @@ const Home = () => {
         setTotalSeats={setTotalSeats}
         cols={cols}
         setCols={setCols}
+        setIsLoadingData={setIsLoadingData}
+        onResizeSeats={handleResizeSeats}
+        onResizeCols={handleResizeCols}
       />
-      <SideButton onResize={handleResize} totalSeats={totalSeats} cols={cols} setCols={setCols} />
     </div>
   );
 };
