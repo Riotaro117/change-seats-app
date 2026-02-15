@@ -3,24 +3,24 @@ import { Link, Navigate } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
+import iconSeatTree from '../components/assets/icon_seat_tree.png';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { currentUser, setUser } = useCurrentUserStore();
+  const { currentUser } = useCurrentUserStore();
 
   const signin = async () => {
-    const data = await authRepository.signin(email, password);
-    setUser(data);
+    await authRepository.signin(email, password);
   };
   // ログイン済みのユーザーの処理
-  if (currentUser != null) return <Navigate replace to="/" />;
+  if (currentUser) return <Navigate replace to="/" />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border-4 border-wood-200 text-center">
-        <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
-          🏫
+        <div className="w-70 h-70 mx-auto">
+          <img src={iconSeatTree} alt="Seat Tree" />
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
         <p className="text-wood-500 mb-8">-配慮できる席替えアプリ-</p>
