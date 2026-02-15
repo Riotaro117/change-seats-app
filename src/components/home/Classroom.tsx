@@ -253,7 +253,7 @@ const Classroom: React.FC<ClassroomProps> = ({
                           />
                         )}
                         {/* もし制約違反があったら */}
-                        {hasConflict && (
+                        {hasConflict && !isPrinted &&(
                           <AlertTriangle className="w-3 h-3 text-red-500 animate-pulse" />
                         )}
                       </div>
