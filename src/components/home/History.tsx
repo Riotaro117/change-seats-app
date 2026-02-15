@@ -108,7 +108,7 @@ const History: React.FC<HistoryProps> = ({ setSeats, setCols, setTotalSeats }) =
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-xs text-wood-400">{layout.date}</span>
                     <span className="text-[10px] bg-wood-100 text-wood-600 px-1.5 py-0.5 rounded-full">
-                      {layout.seats.length}席
+                      {layout.students.length}人
                     </span>
                   </div>
                 </div>
