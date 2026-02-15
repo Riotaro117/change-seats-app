@@ -9,7 +9,7 @@ export const studentsRepository = {
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: true }); // 作成順で並び替え→名前順の方がいい？
-    if (data == null || error != null) throw new Error(error.message);
+    if (!data || error) throw new Error(error.message);
 
     // genderがどの性別かチェックする関数を作成する
     const isGender = (value: string): value is Student['gender'] =>
@@ -42,7 +42,7 @@ export const studentsRepository = {
       })
       .select()
       .single();
-    if (data == null || error != null) throw new Error(error.message);
+    if (!data || error) throw new Error(error.message);
     return data;
   },
   // 生徒の更新
@@ -59,7 +59,7 @@ export const studentsRepository = {
       .eq('user_id', userId)
       .select()
       .single();
-    if (data == null || error != null) throw new Error(error.message);
+    if (!data || error) throw new Error(error.message);
     return data;
   },
   // 生徒の削除
@@ -69,6 +69,6 @@ export const studentsRepository = {
       .delete()
       .eq('id', student.id)
       .eq('user_id', userId);
-    if (error != null) throw new Error(error.message);
+    if (error) throw new Error(error.message);
   },
 };
