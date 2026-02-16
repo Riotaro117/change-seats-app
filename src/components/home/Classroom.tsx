@@ -20,6 +20,7 @@ import { useLayoutsStore } from '../../modules/layouts/layouts.state';
 import { useStudentsStore } from '../../modules/students/students.state';
 import { useReactToPrint } from 'react-to-print';
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 interface ClassroomProps {
   onRandomize: () => void;
@@ -46,6 +47,8 @@ const Classroom: React.FC<ClassroomProps> = ({
   const { students } = useStudentsStore();
   const { currentUser } = useCurrentUserStore();
   const { setLayouts } = useLayoutsStore();
+  const navigate = useNavigate();
+
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
   const getConflictWarning = (seat: Seat): boolean => {
     // 座席に生徒がいないならfalseで終了
@@ -81,6 +84,14 @@ const Classroom: React.FC<ClassroomProps> = ({
     return false;
   };
   const saveCurrentLayout = async () => {
+    if (!currentUser) return;
+    if (currentUser.is_anonymous) {
+      const ok = window.confirm('座席の保存をするには、ユーザーの本登録をして下さい。');
+      if (ok) {
+        navigate('/updateUser', { replace: true });
+      }
+      return;
+    }
     // promptで保存する名前を定義する
     const nameLayout = prompt(
       '保存する名前を入力してください（例: 4月の席替え）',
@@ -97,7 +108,7 @@ const Classroom: React.FC<ClassroomProps> = ({
         seats,
         students,
       };
-      const createdLayout = await layoutsRepository.createLayout(currentUser!.id, layout);
+      const createdLayout = await layoutsRepository.createLayout(currentUser.id, layout);
       setLayouts((prev) => [...prev, createdLayout]);
     } catch (error) {
       console.error(error);
