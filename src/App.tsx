@@ -5,6 +5,7 @@ import Home from './page/Home';
 import Signin from './page/Signin';
 import Signup from './page/Signup';
 import { ProtectedRoute } from './Routes/ProtectedRoute';
+import UpdateUser from './page/UpdateUser';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         </Route>
         <Route path="/signin" element={<Signin />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
+        <Route path="/updateUser" element={<UpdateUser />}></Route>
       </Routes>
     </BrowserRouter>
   );
