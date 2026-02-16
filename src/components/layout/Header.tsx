@@ -3,13 +3,21 @@ import { authRepository } from '../../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 import iconSeatTree from '../assets/icon_seat_tree.png';
+import { useNavigate } from 'react-router';
 
 const Header: React.FC = () => {
   const { setViewMode } = useViewModeStore();
   const { currentUser, setUser } = useCurrentUserStore();
+  const navigate = useNavigate();
   const signout = async () => {
     await authRepository.signout();
     setUser(undefined);
+  };
+  const updateUser = () => {
+    if (window.confirm('お試し版からユーザー登録に切り替えますか？')) {
+      navigate('/updateUser', { replace: true });
+    }
+    return;
   };
   return (
     <header className="bg-white border-b border-wood-200 sticky top-0 z-30 shadow-sm">
@@ -26,17 +34,20 @@ const Header: React.FC = () => {
               Seat Tree
               <span className="text-[15px]">-配慮できる席替えアプリ-</span>
             </h1>
-            <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
+            <div className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
               {currentUser!.user_metadata.name ? (
                 <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
-                  `${currentUser!.user_metadata.name}先生`
+                  {currentUser!.user_metadata.name}先生
                 </p>
               ) : (
-                <p className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center">
+                <p
+                  onClick={updateUser}
+                  className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center"
+                >
                   本登録をしていません
                 </p>
               )}
-            </p>
+            </div>
           </div>
         </div>
 
