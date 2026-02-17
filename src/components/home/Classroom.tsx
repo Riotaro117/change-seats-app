@@ -86,7 +86,7 @@ const Classroom: React.FC<ClassroomProps> = ({
   const saveCurrentLayout = async () => {
     if (!currentUser) return;
     if (currentUser.is_anonymous) {
-      const ok = window.confirm('座席の保存をするには、ユーザーの本登録をして下さい。');
+      const ok = window.confirm('座席の保存をするには、ユーザー登録をして下さい。');
       if (ok) {
         navigate('/updateUser', { replace: true });
       }
