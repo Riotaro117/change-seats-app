@@ -44,7 +44,7 @@ const Header: React.FC = () => {
                   onClick={updateUser}
                   className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center"
                 >
-                  本登録をしていません
+                  ユーザー登録はこちらから！！
                 </p>
               )}
             </div>
