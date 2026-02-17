@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import iconSeatTree from '../components/assets/icon_seat_tree.png';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 
 const UpdateUser = () => {
@@ -22,6 +22,11 @@ const UpdateUser = () => {
       console.error('Error input form:', error);
       alert('入力欄に必須事項を入力して下さい。');
     }
+  };
+
+  const onLoadingSignin = async () => {
+    await authRepository.signout();
+    navigate('/signin', { replace: true });
   };
 
   return (
@@ -64,9 +69,9 @@ const UpdateUser = () => {
           <Button type="submit">ユーザー登録してログイン</Button>
         </form>
         <div className="mt-4 text-center text-sm">
-          <Link className="w-full underline" to={'/signin'}>
+          <button className="cursor-pointer w-full underline" onClick={onLoadingSignin}>
             すでにアカウントをお持ちの方
-          </Link>
+          </button>
         </div>
       </div>
     </div>
