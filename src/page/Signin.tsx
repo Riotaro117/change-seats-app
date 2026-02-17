@@ -1,24 +1,46 @@
-import { useState } from 'react';
-import { Link, Navigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 import iconSeatTree from '../components/assets/icon_seat_tree.png';
+import { useAuth } from '../contexts/useAuth';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { currentUser } = useCurrentUserStore();
+  const { isLoading, setIsLoading } = useAuth();
+  const navigate = useNavigate();
 
   const signin = async () => {
-    await authRepository.signin(email, password);
+    try {
+      await authRepository.signin(email, password);
+    } catch (error) {
+      console.error(error);
+      alert('メールアドレスかパスワードが間違っています。');
+    }
   };
 
   const anonymouslySignin = async () => {
-    await authRepository.anonymouslySignin();
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      await authRepository.anonymouslySignin();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // ログイン済みのユーザーの処理
+  // currentUserができたら遷移する
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser]);
+
   if (currentUser) return <Navigate replace to="/" />;
 
   return (
@@ -50,7 +72,9 @@ const Signin = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit">ログイン</Button>
+          <Button type="submit" disabled={!email || !password || isLoading}>
+            ログイン
+          </Button>
         </form>
         <div className="mt-4 text-center text-sm">
           <Link className="w-full underline " to={'/signup'}>
@@ -58,10 +82,11 @@ const Signin = () => {
           </Link>
         </div>
         <button
+          disabled={isLoading}
           onClick={anonymouslySignin}
-          className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-lime-600 text-white hover:bg-lime-700 shadow-lime-800/20 w-full py-3 text-lg mt-10"
+          className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-lime-600 text-white hover:bg-lime-700 shadow-lime-800/20 w-full py-3 text-lg mt-5"
         >
-          今すぐ試す
+          今すぐ試す！！
         </button>
       </div>
     </div>
