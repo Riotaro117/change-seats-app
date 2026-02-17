@@ -36,6 +36,7 @@ export const authRepository = {
   // ゲストログイン機能
   async anonymouslySignin() {
     const { data, error } = await supabase.auth.signInAnonymously();
+    console.log('anonymous user id:', data.user?.id);
     if (data.user == null || error != null) throw new Error(error?.message);
     return data;
   },
