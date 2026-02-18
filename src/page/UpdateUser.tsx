@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import iconSeatTree from '../components/assets/icon_seat_tree.webp';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 
 const UpdateUser = () => {
@@ -28,6 +28,9 @@ const UpdateUser = () => {
     await authRepository.signout();
     navigate('/signin', { replace: true });
   };
+
+  if (!currentUser) return <Navigate replace to="/signin" />;
+  if (!currentUser.is_anonymous) return <Navigate replace to="/" />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-lime-50 p-4">
