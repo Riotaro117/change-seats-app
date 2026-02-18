@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
-import iconSeatTree from '../components/assets/icon_seat_tree.png';
+import iconSeatTree from '../components/assets/icon_seat_tree.webp';
 import { useNavigate } from 'react-router';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 

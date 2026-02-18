@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
-import iconSeatTree from '../components/assets/icon_seat_tree.png';
+import iconSeatTree from '../components/assets/icon_seat_tree.webp';
 import { useAuth } from '../contexts/useAuth';
 
 const Signin = () => {

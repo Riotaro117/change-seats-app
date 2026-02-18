@@ -2,7 +2,7 @@ import { LogOut } from 'lucide-react';
 import { authRepository } from '../../modules/auth/auth.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
-import iconSeatTree from '../assets/icon_seat_tree.png';
+import iconSeatTree from '../assets/icon_seat_tree.webp';
 import { useNavigate } from 'react-router';
 
 const Header: React.FC = () => {
