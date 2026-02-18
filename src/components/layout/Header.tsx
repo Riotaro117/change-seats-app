@@ -35,16 +35,16 @@ const Header: React.FC = () => {
               <span className="text-[15px]">-配慮できる席替えアプリ-</span>
             </h1>
             <div className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
-              {currentUser!.user_metadata.name ? (
-                <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
-                  {currentUser!.user_metadata.name}先生
-                </p>
-              ) : (
+              {currentUser!.is_anonymous ? (
                 <p
                   onClick={updateUser}
                   className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center hover:bg-red-600"
                 >
                   ユーザー登録はこちらから！！
+                </p>
+              ) : (
+                <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
+                  {currentUser!.user_metadata.name}先生
                 </p>
               )}
             </div>
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
             onClick={signout}
             className="cursor-pointer bg-transparent text-wood-600 hover:bg-wood-100 !shadow-none hidden sm:inline-flex"
           >
-            ログアウト
+            {currentUser!.is_anonymous ? 'トップへ戻る' : 'ログアウト'}
           </button>
           {/* レスポンシブで表示切り替え */}
           <button
