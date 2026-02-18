@@ -1,33 +1,45 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
+import { useAuth } from '../contexts/useAuth';
+import { useCurrentUserStore } from '../modules/auth/current-user.state';
 
 const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { isLoading, setIsLoading } = useAuth();
+  const { currentUser } = useCurrentUserStore();
   const navigate = useNavigate();
 
   const signup = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
-      const data = await authRepository.signup(email, password, name);
-      alert(
-        `${data.userName}先生、登録確認メールを送信しました!メール内のリンクをクリックしてログインして下さい!`,
-      );
-      navigate('/signin', { replace: true });
+      await authRepository.signup(email, password, name);
     } catch (error) {
-      console.error('Error input form:', error);
+      console.error(error);
       alert('入力欄に必須事項を入力して下さい。');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser]);
+
+  if (currentUser) return <Navigate replace to="/" />;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border-4 border-wood-200 text-center">
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
         <p className="text-wood-500 mb-8">-配慮できる席替えアプリ-</p>
         <p className="text-wood-500 mb-8">以下の情報を入力し、ユーザーを登録して下さい。</p>
-        <p className="text-wood-500 mb-8">ユーザー登録後に、認証のメールアドレスが届くので、認証をするとログインができます。</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
