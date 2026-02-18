@@ -68,7 +68,9 @@ const Signup = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit">ユーザー登録</Button>
+          <Button disabled={!name || !email || !password} type="submit">
+            ユーザー登録してログイン
+          </Button>
         </form>
         <div className="mt-4 text-center text-sm">
           <Link className="w-full underline" to={'/signin'}>
