@@ -10,14 +10,23 @@ export type AuthContextType = {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { setUser } = useCurrentUserStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   // 初回の信頼できるユーザーのみ読み込み
   useEffect(() => {
-    const unSubscribe = authRepository.stateChange((user) => {
-      setUser(user ?? undefined);
+    let mounted = true
+    authRepository.getSession().then((user)=>{
+      if(!mounted)return
+      setUser(user)
       setIsLoading(false)
+    })
+
+    const unSubscribe = authRepository.stateChange((user) => {
+      setUser(user);
     });
-    return unSubscribe;
+    return ()=>{
+      mounted = false
+      unSubscribe()
+    }
   }, []);
 
   return (
