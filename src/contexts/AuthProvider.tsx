@@ -13,20 +13,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   // 初回の信頼できるユーザーのみ読み込み
   useEffect(() => {
-    let mounted = true
-    authRepository.getSession().then((user)=>{
-      if(!mounted)return
-      setUser(user)
-      setIsLoading(false)
-    })
+    // 通信完了が遅れた時のためにコンポーネントが画面に存在している状態
+    let mounted = true;
+    // 初期認証が確定したかどうか
+    let initialized = false;
+    authRepository.getSession().then((user) => {
+      if (!mounted) return;
+      setUser(user);
+      setIsLoading(false);
+      initialized = true;
+    });
 
     const unSubscribe = authRepository.stateChange((user) => {
+      if (!initialized) return;
       setUser(user);
     });
-    return ()=>{
-      mounted = false
-      unSubscribe()
-    }
+    return () => {
+      mounted = false;
+      unSubscribe();
+    };
   }, []);
 
   return (
