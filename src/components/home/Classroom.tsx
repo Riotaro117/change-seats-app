@@ -1,16 +1,4 @@
-import {
-  AlertTriangle,
-  ArrowRightLeft,
-  Glasses,
-  GripHorizontal,
-  ImageIcon,
-  Printer,
-  Save,
-  Settings,
-  Shuffle,
-  Users,
-  X,
-} from 'lucide-react';
+import { AlertTriangle, ArrowRightLeft, Glasses, GripHorizontal, X } from 'lucide-react';
 import type { ClassroomLayout, Seat, Student } from '../../type';
 import { ADJACENT_OFFSETS } from '../../constants';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
@@ -21,6 +9,7 @@ import { useStudentsStore } from '../../modules/students/students.state';
 import { useReactToPrint } from 'react-to-print';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import ClassroomButtons from '../ui/ClassroomButtons';
 
 interface ClassroomProps {
   onRandomize: () => void;
@@ -142,50 +131,12 @@ const Classroom: React.FC<ClassroomProps> = ({
   return (
     viewMode === 'classroom' && (
       <>
-        <div className="flex flex-wrap gap-4 justify-center mb-8 sticky top-20 z-20 py-2 bg-wood-50/90 backdrop-blur-sm rounded-xl">
-          <button
-            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20 shadow-md"
-            onClick={onRandomize}
-          >
-            <Shuffle className="w-5 h-5" />
-            席替え実行
-          </button>
-          <button
-            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-            onClick={transitionSetting}
-          >
-            <Settings className="w-5 h-5" />
-            座席設定
-          </button>
-          <button
-            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-            onClick={() => setViewMode('students')}
-          >
-            <Users className="w-5 h-5" />
-            生徒名簿
-          </button>
-          <button
-            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-            onClick={() => setViewMode('history')}
-          >
-            <ImageIcon className="w-5 h-5" />
-            履歴
-          </button>
-          <button
-            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-            onClick={saveCurrentLayout}
-          >
-            <Save className="w-5 h-5" />
-            保存
-          </button>
-          <button
-            className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-            onClick={printCurrentLayout}
-          >
-            <Printer className="w-5 h-5" />
-            印刷
-          </button>
-        </div>
+        <ClassroomButtons
+          onRandomize={onRandomize}
+          onTransitionSetting={transitionSetting}
+          onSaveCurrentLayout={saveCurrentLayout}
+          onPrintCurrentLayout={printCurrentLayout}
+        />
         {/* 教室 */}
         <div ref={contentRef} className="flex flex-col items-center w-full">
           <div className="bg-lime-600 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-lime-800">
