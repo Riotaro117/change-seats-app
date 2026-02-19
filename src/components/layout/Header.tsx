@@ -11,7 +11,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const signout = async () => {
     await authRepository.signout();
-    setUser(undefined);
+    setUser(null);
   };
   const updateUser = () => {
     if (window.confirm('お試し版からユーザー登録に切り替えますか？')) {
