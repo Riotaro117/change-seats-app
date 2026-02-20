@@ -50,7 +50,7 @@ const Signin = () => {
           <img src={iconSeatTree} alt="Seat Tree" />
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
-        <p className="text-wood-500 mb-8">-配慮できる席替えアプリ-</p>
+        <p className="text-wood-500 mb-8 font-serif">-配慮できる席替えアプリ-</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -88,6 +88,11 @@ const Signin = () => {
         >
           今すぐ試す！！
         </button>
+        <p className="text-wood-500 mt-8 text-sm">
+          個人情報は、通信の暗号化とアクセス制御により
+          <br />
+          安全に保護されています。
+        </p>
       </div>
     </div>
   );
