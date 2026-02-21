@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router';
+import { useState } from 'react';
+import { Link } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
-import { useCurrentUserStore } from '../modules/auth/current-user.state';
 import iconSeatTree from '../components/assets/icon_seat_tree.webp';
 import { useAuth } from '../contexts/useAuth';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { currentUser } = useCurrentUserStore();
   const { isLoading, setIsLoading } = useAuth();
-  const navigate = useNavigate();
 
   const signin = async () => {
     try {
@@ -33,15 +30,6 @@ const Signin = () => {
       setIsLoading(false);
     }
   };
-
-  // currentUserができたら遷移する
-  useEffect(() => {
-    if (currentUser) {
-      navigate('/', { replace: true });
-    }
-  }, [currentUser]);
-
-  if (currentUser) return <Navigate replace to="/" />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
