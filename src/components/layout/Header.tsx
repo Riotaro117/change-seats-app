@@ -35,16 +35,16 @@ const Header: React.FC = () => {
               <span className="text-[15px]">-配慮できる席替えアプリ-</span>
             </h1>
             <div className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
-              {currentUser!.is_anonymous ? (
+              {!currentUser!.is_anonymous ? (
+                <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
+                  {currentUser!.user_metadata.name}先生
+                </p>
+              ) : (
                 <p
                   onClick={updateUser}
                   className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center hover:bg-red-600"
                 >
                   ユーザー登録はこちらから！！
-                </p>
-              ) : (
-                <p className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
-                  {currentUser!.user_metadata.name}先生
                 </p>
               )}
             </div>
