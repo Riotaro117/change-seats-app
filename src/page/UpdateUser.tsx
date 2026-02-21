@@ -2,22 +2,23 @@ import { useState } from 'react';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import iconSeatTree from '../components/assets/icon_seat_tree.webp';
-import { Navigate, useNavigate } from 'react-router';
-import { useCurrentUserStore } from '../modules/auth/current-user.state';
+import { useNavigate } from 'react-router';
+import { useAuth } from '../contexts/useAuth';
 
 const UpdateUser = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { currentUser } = useCurrentUserStore();
   const navigate = useNavigate();
+  const { isLoading } = useAuth();
 
   const updateUser = async () => {
     try {
       await authRepository.updateUser(email, password, name);
-      if (currentUser) {
-        navigate('/', { replace: true });
-      }
+      alert(
+        '本登録が完了しました。このあと届くメールの「登録を完了する」ボタンを押してから、ログインしてください。',
+      );
+      await authRepository.signout();
     } catch (error) {
       console.error('Error input form:', error);
       alert('入力欄に必須事項を入力して下さい。');
@@ -28,9 +29,6 @@ const UpdateUser = () => {
     await authRepository.signout();
     navigate('/signin', { replace: true });
   };
-
-  if (!currentUser) return <Navigate replace to="/signin" />;
-  if (!currentUser.is_anonymous) return <Navigate replace to="/" />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-lime-50 p-4">
@@ -69,7 +67,9 @@ const UpdateUser = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit">ユーザー登録してログイン</Button>
+          <Button type="submit" disabled={isLoading || !name || !email || !password}>
+            ユーザー登録
+          </Button>
         </form>
         <div className="mt-4 text-center text-sm">
           <button className="cursor-pointer w-full underline" onClick={onLoadingSignin}>
