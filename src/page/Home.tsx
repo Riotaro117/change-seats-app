@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCurrentUserStore } from '../modules/auth/current-user.state';
 import type { Seat } from '../type';
 import { useStudentsStore } from '../modules/students/students.state';
@@ -23,11 +23,13 @@ const Home = () => {
   const { setStudents } = useStudentsStore();
   const { setLayouts } = useLayoutsStore();
 
+  const hadInsertedTemplate = useRef(false); // 再レンダリングされても値が変わらないし、変更しても再レンダリングがトリガーされない
+
   useEffect(() => {
     if (!isLoading) {
       fetchData();
     }
-  }, [isLoading,currentUser]);
+  }, [isLoading, currentUser?.id]);
 
   // supabaseのデータ取得
   const fetchData = async () => {
@@ -35,8 +37,19 @@ const Home = () => {
     setIsLoadingData(true);
     // 成功した時
     try {
-      // 生徒情報を取得
-      const formattedStudents = await studentsRepository.fetchStudents(currentUser!.id);
+      // ①生徒情報を取得
+      let formattedStudents = await studentsRepository.fetchStudents(currentUser!.id);
+      // ②匿名ユーザーであり生徒が０ならテンプレの投入
+      if (
+        currentUser?.is_anonymous &&
+        formattedStudents.length === 0 &&
+        !hadInsertedTemplate.current
+      ) {
+        hadInsertedTemplate.current = true;
+        await studentsRepository.insertTemplateStudents(currentUser.id);
+        // ③再取得
+        formattedStudents = await studentsRepository.fetchStudents(currentUser!.id);
+      }
       // 取得した生徒情報をグローバルステートに格納
       setStudents(formattedStudents);
       // 教室のレイアウトを取得
