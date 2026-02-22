@@ -27,7 +27,7 @@ const MainContents: React.FC<MainContentsProps> = ({
   cols,
   setCols,
   onResizeSeats,
-  onResizeCols
+  onResizeCols,
 }) => {
   const { students } = useStudentsStore();
   // 現在選択している座席のid
@@ -109,11 +109,12 @@ const MainContents: React.FC<MainContentsProps> = ({
         onRandomize={handleRandomize}
         cols={cols}
         seats={seats}
-        setSeats={setSeats}
         totalSeats={totalSeats}
         studentMap={studentMap}
         isSelectedSeatId={isSelectedSeatId}
         onSeatClick={handleSeatClick}
+        onResizeSeats={onResizeSeats}
+        onResizeCols={onResizeCols}
       />
       {/* 座席設定モード */}
       <Settings
