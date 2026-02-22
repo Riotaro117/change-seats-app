@@ -32,7 +32,7 @@ const Header: React.FC = () => {
           <div className="">
             <h1 className="text-xl font-bold font-serif">
               Seat Tree
-              <span className="text-[15px]">-配慮できる席替えアプリ-</span>
+              <span className="text-[15px] hidden sm:inline">-配慮できる席替えアプリ-</span>
             </h1>
             <div className="bg-orange-100 rounded-lg text-sm font-bold font-serif text-center">
               {!currentUser!.is_anonymous ? (
