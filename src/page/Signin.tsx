@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
 import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import iconSeatTree from '../components/assets/icon_seat_tree.webp';
@@ -64,15 +63,10 @@ const Signin = () => {
             ログイン
           </Button>
         </form>
-        <div className="mt-4 text-center text-sm">
-          <Link className="w-full underline " to={'/signup'}>
-            アカウントを新規作成
-          </Link>
-        </div>
         <button
           disabled={isLoading}
           onClick={anonymouslySignin}
-          className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-lime-600 text-white hover:bg-lime-700 shadow-lime-800/20 w-full py-3 text-lg mt-5"
+          className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-lime-600 text-white hover:bg-lime-700 shadow-lime-800/20 w-full py-3 text-lg mt-3"
         >
           今すぐ試す！！
         </button>

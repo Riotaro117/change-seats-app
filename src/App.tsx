@@ -3,7 +3,6 @@ import { Routes } from 'react-router';
 import { BrowserRouter } from 'react-router';
 import Home from './page/Home';
 import Signin from './page/Signin';
-import Signup from './page/Signup';
 import { ProtectedRoute } from './Routes/ProtectedRoute';
 import UpdateUser from './page/UpdateUser';
 import { AnonymousOnlyRoute } from './Routes/AnonymousOnlyRoute';
@@ -25,7 +24,6 @@ function App() {
         {/* 未ログイン専用 */}
         <Route element={<PublicOnlyRoute />}>
           <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/registered" element={<Registered />} />
         </Route>
       </Routes>
