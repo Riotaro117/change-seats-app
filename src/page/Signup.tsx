@@ -61,7 +61,7 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button disabled={!name || !email || !password || isLoading} type="submit">
-            ユーザー登録してログイン
+            ユーザー登録
           </Button>
         </form>
         <p className="text-wood-500 mt-8">
