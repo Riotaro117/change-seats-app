@@ -72,6 +72,12 @@ export const studentsRepository = {
     if (error) throw new Error(error.message);
   },
 
+  // 全ての生徒の削除
+  async deleteAllStudents(userId: string) {
+    const { error } = await supabase.from('students').delete().eq('user_id', userId);
+    if (error) throw new Error(error.message);
+  },
+
   // テンプレ生徒の追加
   async insertTemplateStudents(userId: string) {
     const templateStudents = [
