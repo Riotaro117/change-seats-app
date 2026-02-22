@@ -74,10 +74,11 @@ const Classroom: React.FC<ClassroomProps> = ({
     // 何も違反がない場合はfalse
     return false;
   };
+  // 教室配置保存ボタン
   const saveCurrentLayout = async () => {
     if (!currentUser) return;
     if (currentUser.is_anonymous) {
-      const ok = window.confirm('座席の保存をするには、ユーザー登録をして下さい。');
+      const ok = window.confirm('この機能はユーザー登録者限定です。ユーザー登録しますか？');
       if (ok) {
         navigate('/updateUser', { replace: true });
       }
