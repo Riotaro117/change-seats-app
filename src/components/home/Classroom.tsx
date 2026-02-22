@@ -15,22 +15,24 @@ interface ClassroomProps {
   onRandomize: () => void;
   cols: number;
   seats: Seat[];
-  setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
   totalSeats: number;
   studentMap: Map<string, Student>;
   isSelectedSeatId: string | null;
   onSeatClick: (seat: Seat) => void;
+  onResizeSeats: (size: number) => void;
+  onResizeCols: (size: number, totalSeats: number) => void;
 }
 
 const Classroom: React.FC<ClassroomProps> = ({
   onRandomize,
   cols,
   seats,
-  setSeats,
   totalSeats,
   studentMap,
   isSelectedSeatId,
   onSeatClick,
+  onResizeSeats,
+  onResizeCols,
 }) => {
   const { viewMode, setViewMode } = useViewModeStore();
   const { students } = useStudentsStore();
@@ -108,7 +110,8 @@ const Classroom: React.FC<ClassroomProps> = ({
   // 設定画面へ遷移
   const transitionSetting = () => {
     if (window.confirm('現在の配置は失われます。座席設定画面に遷移しますか？')) {
-      setSeats([]);
+      onResizeSeats(30);
+      onResizeCols(6, 30);
       setViewMode('settings');
     }
   };
@@ -136,7 +139,7 @@ const Classroom: React.FC<ClassroomProps> = ({
           onTransitionSetting={transitionSetting}
           onSaveCurrentLayout={saveCurrentLayout}
           onPrintCurrentLayout={printCurrentLayout}
-          />
+        />
         {/* 教室 */}
         <div ref={contentRef} className="flex flex-col items-center w-full">
           <div className="bg-lime-600 text-white px-12 py-2 rounded-b-xl shadow-md mb-8 w-2/3 text-center border-b-4 border-lime-800">
