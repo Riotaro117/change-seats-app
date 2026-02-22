@@ -27,7 +27,7 @@ const Home = () => {
     if (!isLoading) {
       fetchData();
     }
-  }, [seats]);
+  }, [isLoading,currentUser]);
 
   // supabaseのデータ取得
   const fetchData = async () => {
