@@ -130,7 +130,7 @@ export const generateSeatingChart = (
   const enabledSet = new Set(enabledIndices);
 
   if (enabledIndices.length < students.length)
-    throw new Error('使用可能な座席が少なく、生徒が座れません');
+    throw new Error('使用可能な座席が少なく、生徒が座れません。使用可能な座席を増やして下さい。');
 
   // 生徒のidと情報をキーとバリューで持つ（高速アクセス用）
   const studentMap = new Map(students.map((s) => [s.id, s]));
