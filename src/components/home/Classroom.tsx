@@ -116,6 +116,14 @@ const Classroom: React.FC<ClassroomProps> = ({
       setViewMode('settings');
     }
   };
+  // 設定画面へ遷移
+  const transitionStudentManager = () => {
+    if (window.confirm('現在の配置は失われます。生徒名簿画面に遷移しますか？')) {
+      onResizeSeats(30);
+      onResizeCols(6, 30);
+      setViewMode('students');
+    }
+  };
 
   // 印刷ボタン
   const contentRef = useRef<HTMLDivElement>(null);
@@ -138,6 +146,7 @@ const Classroom: React.FC<ClassroomProps> = ({
         <ClassroomButtons
           onRandomize={onRandomize}
           onTransitionSetting={transitionSetting}
+          onTransitionStudentManager={transitionStudentManager}
           onSaveCurrentLayout={saveCurrentLayout}
           onPrintCurrentLayout={printCurrentLayout}
         />

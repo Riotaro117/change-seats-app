@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/useAuth';
 interface ClassroomButtonsProps {
   onRandomize: () => void;
   onTransitionSetting: () => void;
+  onTransitionStudentManager: () => void;
   onSaveCurrentLayout: () => Promise<void>;
   onPrintCurrentLayout: UseReactToPrintFn;
 }
@@ -13,6 +14,7 @@ interface ClassroomButtonsProps {
 const ClassroomButtons: React.FC<ClassroomButtonsProps> = ({
   onRandomize,
   onTransitionSetting,
+  onTransitionStudentManager,
   onSaveCurrentLayout,
   onPrintCurrentLayout,
 }) => {
@@ -38,7 +40,7 @@ const ClassroomButtons: React.FC<ClassroomButtonsProps> = ({
       </button>
       <button
         className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50 shadow-md"
-        onClick={() => setViewMode('students')}
+        onClick={onTransitionStudentManager}
       >
         <Users className="w-5 h-5" />
         生徒名簿
