@@ -37,7 +37,8 @@ const Signin = () => {
           <img src={iconSeatTree} alt="Seat Tree" />
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
-        <p className="text-wood-500 mb-8 font-serif">-配慮できる席替えアプリ-</p>
+        <p className="text-wood-500 mb-2 font-serif">-配慮できる席替えアプリ-</p>
+        <p className="text-wood-500 mb-8 font-serif">v1.0.1</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
