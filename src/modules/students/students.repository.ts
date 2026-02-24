@@ -188,9 +188,9 @@ export const studentsRepository = {
       },
       {
         user_id: userId,
-        name: '明智光秀',
+        name: '石川五右衛門',
         gender: 'boy',
-        needs_front_row: true,
+        needs_front_row: false,
         bad_chemistry_with: [],
       },
       {
