@@ -17,7 +17,6 @@ import { studentsRepository } from '../../modules/students/students.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 import { useNavigate } from 'react-router';
-import ImportExcelFile from '../ui/ImportExcelFile';
 
 const StudentsManager: React.FC = () => {
   const { viewMode, setViewMode } = useViewModeStore();
@@ -217,7 +216,6 @@ const StudentsManager: React.FC = () => {
               </button>
             </div>
           </div>
-          <ImportExcelFile />
 
           <div
             className={`flex-1 overflow-y-auto pr-2 space-y-3 ${isDataLoading ? 'opacity-50 pointer-events-none' : ''}`}
@@ -363,8 +361,7 @@ const StudentsManager: React.FC = () => {
             onClick={handleAllRemove}
             disabled={isDataLoading}
           >
-            <AlertTriangle />
-            全ての生徒を削除
+            <AlertTriangle/>全ての生徒を削除
           </button>
         </div>
       </>
