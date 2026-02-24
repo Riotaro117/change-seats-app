@@ -38,7 +38,7 @@ const Signin = () => {
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
         <p className="text-wood-500 mb-2 font-serif">-配慮できる席替えアプリ-</p>
-        <p className="text-wood-500 mb-8 font-serif">v1.0.1</p>
+        <p className="text-wood-500 mb-8 font-serif">v1.0.3</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -69,7 +69,7 @@ const Signin = () => {
           onClick={anonymouslySignin}
           className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-lime-600 text-white hover:bg-lime-700 shadow-lime-800/20 w-full py-3 text-lg mt-3"
         >
-          今すぐ試す！！
+          今すぐ始める！
         </button>
         <p className="text-wood-500 mt-8 text-sm">
           個人情報は、通信の暗号化とアクセス制御により
