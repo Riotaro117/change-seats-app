@@ -10,6 +10,7 @@ const ImportExcelFile = () => {
   const { isLoading, setIsLoading } = useAuth();
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 連打禁止
     if (isLoading) return;
     if (!currentUser) return;
     if (currentUser.is_anonymous) {
@@ -21,15 +22,20 @@ const ImportExcelFile = () => {
     }
     setIsLoading(true);
 
+    // input type="file"で選ばれたファイルを取得
     const file = e.target.files?.[0]; //[0]とすることで選択したファイルを取得できる
     if (!file) return;
 
+    // excelファイルをバイナリデータに変換
     const data = await file.arrayBuffer();
+    // XLSXがexcelデータを解析
     const workbook = XLSX.read(data);
 
+    // 1番目のシート名を取得→データ取得
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
+    // Excel→Json配列へ変換
     const jsonData = XLSX.utils.sheet_to_json<{ name: string }>(worksheet);
 
     try {
