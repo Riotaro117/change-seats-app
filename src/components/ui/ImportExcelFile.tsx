@@ -1,7 +1,21 @@
 import * as XLSX from 'xlsx';
+import { useCurrentUserStore } from '../../modules/auth/current-user.state';
+import { useNavigate } from 'react-router';
 
 const ImportExcelFile = () => {
+  const { currentUser } = useCurrentUserStore();
+  const navigate = useNavigate();
+
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!currentUser) return;
+    if (currentUser.is_anonymous) {
+      const ok = window.confirm('この機能はユーザー登録者限定です。ユーザー登録しますか？');
+      if (ok) {
+        navigate('/updateUser', { replace: true });
+      }
+      return;
+    }
+
     const file = e.target.files?.[0]; //[0]とすることで選択したファイルを取得できる
     if (!file) return;
 
@@ -11,7 +25,7 @@ const ImportExcelFile = () => {
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
-    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    const jsonData = XLSX.utils.sheet_to_json<{ name: string }>(worksheet);
 
     console.log(jsonData);
   };
