@@ -11,7 +11,6 @@ const ImportExcelFile = () => {
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isLoading) return;
-    setIsLoading(true);
     if (!currentUser) return;
     if (currentUser.is_anonymous) {
       const ok = window.confirm('この機能はユーザー登録者限定です。ユーザー登録しますか？');
@@ -20,6 +19,7 @@ const ImportExcelFile = () => {
       }
       return;
     }
+    setIsLoading(true);
 
     const file = e.target.files?.[0]; //[0]とすることで選択したファイルを取得できる
     if (!file) return;
