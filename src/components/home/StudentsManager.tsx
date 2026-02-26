@@ -3,8 +3,6 @@ import {
   Check,
   CircleUserRound,
   Glasses,
-  Loader2,
-  Plus,
   Trash2,
   User,
   Users,
@@ -17,46 +15,20 @@ import { studentsRepository } from '../../modules/students/students.repository';
 import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useViewModeStore } from '../../modules/viewMode/viewMode.state';
 import { useNavigate } from 'react-router';
-import ImportExcelFile from '../ui/ImportExcelFile';
+import AddStudentTabs from '../ui/AddStudentTabs';
+import { useAuth } from '../../contexts/useAuth';
 
 const StudentsManager: React.FC = () => {
   const { viewMode, setViewMode } = useViewModeStore();
   const { students, setStudents } = useStudentsStore();
   const { currentUser } = useCurrentUserStore();
-  // 生徒名簿の名前入力欄の値
-  const [newStudentName, setNewStudentName] = useState('');
-  // 生徒の性別
-  const [newStudentGender, setNewStudentGender] = useState<'boy' | 'girl' | 'other'>('boy');
+
   // DBとの通信の状態
-  const [isDataLoading, setIsDataLoading] = useState(false);
+  const { isLoading,setIsLoading } = useAuth();
   // 編集しているidの状態
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const navigate = useNavigate();
-
-  // 生徒を追加する処理
-  const handleAddStudent = async () => {
-    // 入力欄の両端の空白はカットして、空白なら処理を止める→文字列をbooleanにすると、''はfalse
-    if (!newStudentName.trim()) return;
-    setIsDataLoading(true);
-    try {
-      const student: Omit<Student, 'id'> = {
-        name: newStudentName,
-        gender: newStudentGender,
-        needsFrontRow: false, // 初期値はfalse
-        badChemistryWith: [], // 初期値は[]
-      };
-      const addStudent = await studentsRepository.addStudent(currentUser!.id, student);
-      // idはDBが作成したものなので、既存の生徒の配列をコピーして、idを追加して生徒を追加する
-      setStudents((prev) => [...prev, { ...student, id: addStudent.id }]);
-      setNewStudentName('');
-    } catch (error) {
-      console.error(error);
-      alert('保存に失敗しました');
-    } finally {
-      setIsDataLoading(false);
-    }
-  };
 
   // 生徒の情報を更新する処理
   const handleUpdateGender = async (student: Student, gender: Student['gender']) => {
@@ -107,7 +79,7 @@ const StudentsManager: React.FC = () => {
 
   const handleRemove = async (targetId: string) => {
     if (!confirm('本当に削除しますか？')) return;
-    setIsDataLoading(true);
+    setIsLoading(true);
     try {
       // 選択されたidと一致する生徒を削除する生徒として定義する
       const deleteStudent = students.find((s) => s.id === targetId);
@@ -118,7 +90,7 @@ const StudentsManager: React.FC = () => {
       console.error(error);
       alert('削除に失敗しました');
     } finally {
-      setIsDataLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -133,7 +105,7 @@ const StudentsManager: React.FC = () => {
       return;
     }
     if (!confirm('全ての生徒を本当に削除しますか？')) return;
-    setIsDataLoading(true);
+    setIsLoading(true);
     try {
       await studentsRepository.deleteAllStudents(currentUser!.id);
       setStudents([]);
@@ -141,7 +113,7 @@ const StudentsManager: React.FC = () => {
       console.error(error);
       alert('削除に失敗しました');
     } finally {
-      setIsDataLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -172,55 +144,16 @@ const StudentsManager: React.FC = () => {
             </div>
             <button
               onClick={() => setViewMode('classroom')}
-              disabled={isDataLoading}
+              disabled={isLoading}
               className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50"
             >
               完了
             </button>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 mb-6 bg-wood-50 p-4 rounded-xl border border-wood-100">
-            <input
-              type="text"
-              value={newStudentName}
-              onChange={(e) => setNewStudentName(e.target.value)}
-              placeholder="新しい生徒の名前"
-              className="flex-1 px-4 py-3 rounded-xl border-2 border-wood-200 focus:border-wood-400 focus:outline-none bg-white"
-              onKeyDown={(e) => e.key === 'Enter' && handleAddStudent()}
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={() => setNewStudentGender('boy')}
-                disabled={isDataLoading}
-                className={`cursor-pointer px-4 py-2 rounded-xl border-2 font-bold transition-all ${newStudentGender === 'boy' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'bg-white border-wood-200 text-gray-400'}`}
-              >
-                男子
-              </button>
-              <button
-                onClick={() => setNewStudentGender('girl')}
-                disabled={isDataLoading}
-                className={`cursor-pointer px-4 py-2 rounded-xl border-2 font-bold transition-all ${newStudentGender === 'girl' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'bg-white border-wood-200 text-gray-400'}`}
-              >
-                女子
-              </button>
-              <button
-                className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20"
-                onClick={handleAddStudent}
-                disabled={isDataLoading}
-              >
-                {isDataLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Plus className="w-5 h-5" />
-                )}
-                追加
-              </button>
-            </div>
-          </div>
-          <ImportExcelFile />
+          <AddStudentTabs />
 
           <div
-            className={`flex-1 overflow-y-auto pr-2 space-y-3 ${isDataLoading ? 'opacity-50 pointer-events-none' : ''}`}
+            className={`flex-1 overflow-y-auto pr-2 space-y-3 ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
           >
             {students.map((student) => (
               <div
@@ -244,14 +177,14 @@ const StudentsManager: React.FC = () => {
                     <div className="flex gap-2 sm:hidden mt-1">
                       <button
                         onClick={() => handleUpdateGender(student, 'boy')}
-                        disabled={isDataLoading}
+                        disabled={isLoading}
                         className={`cursor-pointer text-xs px-2 py-0.5 rounded border ${student.gender === 'boy' ? 'bg-blue-100 border-blue-300 text-blue-700' : 'border-gray-200 text-gray-400'}`}
                       >
                         男
                       </button>
                       <button
                         onClick={() => handleUpdateGender(student, 'girl')}
-                        disabled={isDataLoading}
+                        disabled={isLoading}
                         className={`cursor-pointer text-xs px-2 py-0.5 rounded border ${student.gender === 'girl' ? 'bg-pink-100 border-pink-300 text-pink-700' : 'border-gray-200 text-gray-400'}`}
                       >
                         女
@@ -264,7 +197,7 @@ const StudentsManager: React.FC = () => {
                   <div className="hidden sm:flex bg-white rounded-lg p-1 border border-wood-200">
                     <button
                       onClick={() => handleUpdateGender(student, 'boy')}
-                      disabled={isDataLoading}
+                      disabled={isLoading}
                       className={`cursor-pointer p-1.5 rounded-md transition-all ${student.gender === 'boy' ? 'bg-blue-100 text-blue-600 shadow-sm' : 'text-gray-300 hover:text-gray-500'}`}
                       title="男子"
                     >
@@ -272,7 +205,7 @@ const StudentsManager: React.FC = () => {
                     </button>
                     <button
                       onClick={() => handleUpdateGender(student, 'girl')}
-                      disabled={isDataLoading}
+                      disabled={isLoading}
                       className={`cursor-pointer p-1.5 rounded-md transition-all ${student.gender === 'girl' ? 'bg-pink-100 text-pink-600 shadow-sm' : 'text-gray-300 hover:text-gray-500'}`}
                       title="女子"
                     >
@@ -282,7 +215,7 @@ const StudentsManager: React.FC = () => {
 
                   <button
                     onClick={() => handleToggleProperty(student, 'needsFrontRow')}
-                    disabled={isDataLoading}
+                    disabled={isLoading}
                     className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                       student.needsFrontRow
                         ? 'bg-yellow-100 text-blue-700 border border-blue-200'
@@ -296,7 +229,7 @@ const StudentsManager: React.FC = () => {
                   <div className="relative">
                     <button
                       onClick={() => setEditingId(editingId === student.id ? null : student.id)}
-                      disabled={isDataLoading}
+                      disabled={isLoading}
                       className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                         student.badChemistryWith.length > 0
                           ? 'bg-red-100 text-red-700 border border-red-200'
@@ -310,7 +243,7 @@ const StudentsManager: React.FC = () => {
 
                   <button
                     onClick={() => handleRemove(student.id)}
-                    disabled={isDataLoading}
+                    disabled={isLoading}
                     className="cursor-pointer p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -333,7 +266,7 @@ const StudentsManager: React.FC = () => {
                             <button
                               key={other.id}
                               onClick={() => toggleBadChemistry(student, other.id)}
-                              disabled={isDataLoading}
+                              disabled={isLoading}
                               className={`cursor-pointer px-2 py-1 text-xs rounded-md border transition-all ${
                                 isSelected
                                   ? 'bg-red-500 text-white border-red-600 shadow-sm'
@@ -361,7 +294,7 @@ const StudentsManager: React.FC = () => {
           <button
             className="flex cursor-pointer mt-3 items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-red-800 border-2 border-red-200 hover:border-red-400 hover:bg-red-50"
             onClick={handleAllRemove}
-            disabled={isDataLoading}
+            disabled={isLoading}
           >
             <AlertTriangle />
             全ての生徒を削除
