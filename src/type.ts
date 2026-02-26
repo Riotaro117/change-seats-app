@@ -1,4 +1,7 @@
 // 仮UIを作成する前にデータ設計をする
+
+import type { ReactNode } from "react";
+
 // 先に型を作成して、それを元にDB(Supabase)、API(CRUD)、UI(React)を作成する
 export type Student = {
   id: string;
@@ -34,3 +37,9 @@ export type ClassroomLayout = {
 };
 
 export type ViewMode = 'classroom' | 'students' | 'history' | 'settings';
+
+export type Tab = {
+  id: number;
+  label: string;
+  content: ReactNode; // ReactNodeは文字列、JSX、コンポーネント、Fragment、okになる
+};
