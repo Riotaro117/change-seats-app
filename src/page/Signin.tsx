@@ -38,7 +38,7 @@ const Signin = () => {
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
         <p className="text-wood-500 mb-2 font-serif">-配慮できる席替えアプリ-</p>
-        <p className="text-wood-500 mb-8 font-serif">v1.0.3</p>
+        <p className="text-wood-500 mb-8 font-serif">v1.1.0</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
