@@ -3,6 +3,7 @@ import { useCurrentUserStore } from '../../modules/auth/current-user.state';
 import { useNavigate } from 'react-router';
 import { studentsRepository } from '../../modules/students/students.repository';
 import { useAuth } from '../../contexts/useAuth';
+import { AlertTriangle, Download, Loader2, Plus } from 'lucide-react';
 
 const ImportExcelFile = () => {
   const { currentUser } = useCurrentUserStore();
@@ -48,12 +49,35 @@ const ImportExcelFile = () => {
       setIsLoading(false);
     }
   };
+
   return (
-    <div className="flex flex-col sm:flex-row gap-2 bg-wood-50 p-4 rounded-xl border border-wood-100">
-      <a href="/students_name_template.xlsx" download>
+    <div className="flex flex-col items-center gap-2 bg-wood-50 p-4 rounded-xl border border-wood-100">
+      <a
+        href="/students_name_template.xlsx"
+        download
+        className="max-w-md rounded-xl border-2 border-wood-200 p-3 flex items-center gap-3 bg-white hover:bg-wood-50 rounded-lg"
+      >
         Excelテンプレートをダウンロード
+        <Download className="w-5 h-5" />
       </a>
-      <input type="file" accept=".xlsx" onChange={handleFile} />
+      <div className="flex flex-col items-center gap-3">
+        {/* 実際のinput（隠す） */}
+        <input id='file-upload' type="file" accept=".xlsx" className="hidden" onChange={handleFile} />
+
+        {/* カスタムボタン */}
+        <label
+          htmlFor="file-upload"
+          className="
+          px-6 py-3 flex items-center gap-2
+          cursor-pointer
+          rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-wood-600 text-white hover:bg-wood-700 shadow-wood-800/20
+        "
+        >
+          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
+          ファイルを選択し、生徒を追加
+        </label>
+      </div>
+      <div className='mt-2 flex gap-2 justify-center items-center text-red-500 text-sm'><AlertTriangle/>必ずテンプレートファイルを編集し、選択して下さい。</div>
     </div>
   );
 };
