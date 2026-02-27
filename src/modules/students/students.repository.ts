@@ -295,4 +295,24 @@ export const studentsRepository = {
     const { error } = await supabase.from('students').insert(templateStudents);
     if (error) throw new Error(error.message);
   },
+
+  // Excelでデータを取り込んだ時のデータ登録
+  async insertExcelFile(
+    userId: string,
+    studentToInsert: {
+      name: string;
+    }[],
+  ) {
+    const formattedStudents = studentToInsert
+      .filter((s) => s.name && s.name.trim() !== '')
+      .map((s) => ({
+        user_id: userId,
+        name: s.name.trim(),
+        gender: 'boy',
+        needs_front_row: false,
+        bad_chemistry_with: [],
+      }));
+    const { error } = await supabase.from('students').insert(formattedStudents);
+    if (error) throw new Error(error.message);
+  },
 };
