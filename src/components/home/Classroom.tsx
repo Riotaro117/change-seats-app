@@ -69,7 +69,7 @@ const Classroom: React.FC<ClassroomProps> = ({
     }
 
     // 2. 視力が悪い人のチェック
-    if (student.needsFrontRow && seat.row > 1) return true;
+    if (student.needsFrontRow && seat.row >= 2) return true;
 
     // 何も違反がない場合はfalse
     return false;
