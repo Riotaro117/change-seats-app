@@ -18,13 +18,18 @@ import { useNavigate } from 'react-router';
 import AddStudentTabs from '../ui/AddStudentTabs';
 import { useAuth } from '../../contexts/useAuth';
 
-const StudentsManager: React.FC = () => {
+interface StudentManagerProps {
+  frontRowLimit: number;
+  setFrontRowLimit: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFrontRowLimit }) => {
   const { viewMode, setViewMode } = useViewModeStore();
   const { students, setStudents } = useStudentsStore();
   const { currentUser } = useCurrentUserStore();
 
   // DBとの通信の状態
-  const { isLoading,setIsLoading } = useAuth();
+  const { isLoading, setIsLoading } = useAuth();
   // 編集しているidの状態
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -132,15 +137,17 @@ const StudentsManager: React.FC = () => {
                 {students.filter((s) => s.gender === 'boy').length}人、女子{' '}
                 {students.filter((s) => s.gender === 'girl').length}人）
               </p>
-              <p className=" text-red-400 text-sm mt-2">
-                基本的に男女が交互に座りますが、比率が均等でない場合は同性で座ることもあります。
-              </p>
-              <p className="text-red-400 text-sm mt-1">
-                前列希望を設定すると、前から２列目までに座ります。
-              </p>
-              <p className="text-red-400 text-sm mt-1">
-                NG相手を設定すると、NG相手とは前後左右を避けて座ります。
-              </p>
+              <div className="p-3 bg-wood-100 rounded-xl">
+                <p className=" text-red-400 text-sm mt-2">
+                  基本的に男女が交互に座りますが、比率が均等でない場合は同性で座ることもあります。
+                </p>
+                <p className="text-red-400 text-sm mt-1">
+                  前列希望を設定すると、前から２列目までに座ります。
+                </p>
+                <p className="text-red-400 text-sm mt-1">
+                  NG相手を設定すると、NG相手とは前後左右を避けて座ります。
+                </p>
+              </div>
             </div>
             <button
               onClick={() => setViewMode('classroom')}
