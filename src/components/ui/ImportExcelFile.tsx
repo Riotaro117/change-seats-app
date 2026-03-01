@@ -55,14 +55,20 @@ const ImportExcelFile = () => {
       <a
         href="/students_name_template.xlsx"
         download
-        className="max-w-md rounded-xl border-2 border-wood-200 p-3 flex items-center gap-3 bg-white hover:bg-wood-50 rounded-lg"
+        className="max-w-md rounded-xl border-2 border-wood-200 text-wood-800 p-3 flex items-center gap-3 bg-white hover:bg-wood-50 rounded-lg"
       >
         Excelテンプレートをダウンロード
         <Download className="w-5 h-5" />
       </a>
       <div className="flex flex-col items-center gap-3">
         {/* 実際のinput（隠す） */}
-        <input id='file-upload' type="file" accept=".xlsx" className="hidden" onChange={handleFile} />
+        <input
+          id="file-upload"
+          type="file"
+          accept=".xlsx"
+          className="hidden"
+          onChange={handleFile}
+        />
 
         {/* カスタムボタン */}
         <label
@@ -77,7 +83,10 @@ const ImportExcelFile = () => {
           ファイルを選択し、生徒を追加
         </label>
       </div>
-      <div className='mt-2 flex gap-2 justify-center items-center text-red-500 text-sm'><AlertTriangle/>必ずテンプレートファイルを編集し、選択して下さい。</div>
+      <div className="mt-2 flex gap-2 justify-center items-center text-red-500 text-sm">
+        <AlertTriangle />
+        必ずテンプレートファイルを編集し、選択して下さい。
+      </div>
     </div>
   );
 };
