@@ -21,6 +21,7 @@ interface ClassroomProps {
   onSeatClick: (seat: Seat) => void;
   onResizeSeats: (size: number) => void;
   onResizeCols: (size: number, totalSeats: number) => void;
+  frontRowLimit: number;
 }
 
 const Classroom: React.FC<ClassroomProps> = ({
@@ -33,6 +34,7 @@ const Classroom: React.FC<ClassroomProps> = ({
   onSeatClick,
   onResizeSeats,
   onResizeCols,
+  frontRowLimit,
 }) => {
   const { viewMode, setViewMode } = useViewModeStore();
   const { students } = useStudentsStore();
@@ -41,7 +43,7 @@ const Classroom: React.FC<ClassroomProps> = ({
   const navigate = useNavigate();
 
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
-  const getConflictWarning = (seat: Seat): boolean => {
+  const getConflictWarning = (seat: Seat, frontRowLimit: number): boolean => {
     // 座席に生徒がいないならfalseで終了
     if (!seat.studentId) return false;
     // 生徒を定義する
@@ -69,7 +71,7 @@ const Classroom: React.FC<ClassroomProps> = ({
     }
 
     // 2. 視力が悪い人のチェック
-    if (student.needsFrontRow && seat.row >= 2) return true;
+    if (student.needsFrontRow && seat.row >= frontRowLimit) return true;
 
     // 何も違反がない場合はfalse
     return false;
@@ -170,7 +172,7 @@ const Classroom: React.FC<ClassroomProps> = ({
               // 選択している座席のidとseatのidが一致している状態を定義
               const isSelected = isSelectedSeatId === seat.id;
               // seatingLogicを元に制約違反があるかどうか
-              const hasConflict = getConflictWarning(seat);
+              const hasConflict = getConflictWarning(seat,frontRowLimit);
 
               // 文字の色を定義
               let textColor = 'text-wood-900';
