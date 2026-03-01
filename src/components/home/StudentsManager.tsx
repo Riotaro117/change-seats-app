@@ -141,12 +141,16 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
               </button>
             </div>
             <div className="p-5 bg-wood-100 border border-wood-200 rounded-xl mt-2 text-wood-800">
-              <h3 className="font-bold">席替えについて</h3>
+              <h3 className="p-1 w-fit font-bold bg-wood-50 border border-wood-200 rounded-lg">
+                席替えについて
+              </h3>
               <ul className="flex flex-col gap-3 mt-2">
                 <li className="text-sm">
                   1. 基本的に男女が交互に座ります。
                   <br />
-                  (比率が均等でない場合は同性で座ることもあります。)
+                  <span className="text-red-400">
+                    ( 比率が均等でない場合は同性で座ることもあります。 )
+                  </span>
                 </li>
                 <li className="text-sm">
                   2. 前列希望は、前から
@@ -160,6 +164,10 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
                     <option value={3}>3列目まで</option>
                   </select>
                   に座ります。
+                  <br />
+                  <span className="text-red-400">
+                    ( 席数に対して希望者が超過するとできません。 )
+                  </span>
                 </li>
                 <li className="text-sm">3. NG設定は、NG相手と前後左右を避けて座ります。</li>
               </ul>
@@ -167,11 +175,20 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
           </div>
           <AddStudentTabs />
 
-          <p className="text-wood-500 text-sm mt-3">
-            現在の人数: 合計 {students.length}人（男子{' '}
-            {students.filter((s) => s.gender === 'boy').length}人、女子{' '}
-            {students.filter((s) => s.gender === 'girl').length}人）
-          </p>
+          <div className="p-3 mt-3 mb-2 rounded-lg bg-wood-100 flex items-center justify-between">
+            <p className="px-8 text-wood-800 font-bold text-md bg-white rounded-lg">
+              現在の人数: 計 {students.length}名
+            </p>
+            <div className='flex gap-2 items-center'>
+              <span className="p-1 text-sm bg-blue-100 text-blue-800 rounded-lg">
+                男子: {students.filter((s) => s.gender === 'boy').length}名
+              </span>
+              <span className="p-1 text-sm bg-red-100 text-red-800 rounded-lg">
+                女子: {students.filter((s) => s.gender === 'girl').length}名
+              </span>
+            </div>
+          </div>
+
           <div
             className={`flex-1 overflow-y-auto pr-2 space-y-3 ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
           >
