@@ -60,7 +60,23 @@ export const studentsRepository = {
       .select()
       .single();
     if (!data || error) throw new Error(error.message);
-    return data;
+    // genderがどの性別かチェックする関数を作成する
+    const isGender = (value: string): value is Student['gender'] =>
+      value === 'boy' || value === 'girl' || value === 'other';
+
+    // DBの項目のsnake_case→appの項目のcamelcaseへ変換
+    const formattedStudents: Student[] = (data || []).map((s) => ({
+      id: s.id,
+      name: s.name,
+      gender: isGender(s.gender) ? s.gender : 'other',
+      needsFrontRow: s.needs_front_row ?? false,
+      // DBの項目が配列かどうかチェックする。falseなら空配列
+      badChemistryWith: Array.isArray(s.bad_chemistry_with)
+        ? (s.bad_chemistry_with as string[])
+        : [],
+    }));
+
+    return formattedStudents;
   },
   // 生徒の削除
   async deleteStudent(userId: string, student: Student) {
