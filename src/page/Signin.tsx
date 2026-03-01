@@ -14,7 +14,9 @@ const Signin = () => {
       await authRepository.signin(email, password);
     } catch (error) {
       console.error(error);
-      alert('メールアドレスかパスワードが間違っています。');
+      alert(
+        'メールアドレスかパスワードが間違っています。もしくは、メールを確認して認証して下さい。',
+      );
     }
   };
 
@@ -38,7 +40,7 @@ const Signin = () => {
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
         <p className="text-wood-500 mb-2 font-serif">-配慮できる席替えアプリ-</p>
-        <p className="text-wood-500 mb-8 font-serif">v1.1.0</p>
+        <p className="text-wood-500 mb-8 font-serif">v1.2.0</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
