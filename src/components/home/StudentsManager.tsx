@@ -126,39 +126,52 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
     viewMode === 'students' && (
       <>
         <div className="bg-white rounded-3xl shadow-xl border-4 border-wood-200 p-6 h-full flex flex-col max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <div>
+          <div className="mb-6">
+            <div className="flex justify-between">
               <h2 className="text-2xl font-bold font-serif flex items-center gap-2">
                 <Users className="w-6 h-6 text-wood-500" />
                 生徒名簿
               </h2>
-              <p className="text-wood-500 text-sm mt-1">
-                現在の人数: 合計 {students.length}人（男子{' '}
-                {students.filter((s) => s.gender === 'boy').length}人、女子{' '}
-                {students.filter((s) => s.gender === 'girl').length}人）
-              </p>
-              <div className="p-3 bg-wood-100 rounded-xl">
-                <p className=" text-red-400 text-sm mt-2">
-                  基本的に男女が交互に座りますが、比率が均等でない場合は同性で座ることもあります。
-                </p>
-                <p className="text-red-400 text-sm mt-1">
-                  前列希望を設定すると、前から２列目までに座ります。
-                </p>
-                <p className="text-red-400 text-sm mt-1">
-                  NG相手を設定すると、NG相手とは前後左右を避けて座ります。
-                </p>
-              </div>
+              <button
+                onClick={() => setViewMode('classroom')}
+                disabled={isLoading}
+                className="cursor-pointer px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50"
+              >
+                完了
+              </button>
             </div>
-            <button
-              onClick={() => setViewMode('classroom')}
-              disabled={isLoading}
-              className="cursor-pointer items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95 bg-white text-wood-800 border-2 border-wood-200 hover:border-wood-400 hover:bg-wood-50"
-            >
-              完了
-            </button>
+            <div className="p-5 bg-wood-100 border border-wood-200 rounded-xl mt-2 text-wood-800">
+              <h3 className="font-bold">席替えについて</h3>
+              <ul className="flex flex-col gap-3 mt-2">
+                <li className="text-sm">
+                  1. 基本的に男女が交互に座ります。
+                  <br />
+                  (比率が均等でない場合は同性で座ることもあります。)
+                </li>
+                <li className="text-sm">
+                  2. 前列希望は、前から
+                  <select
+                    value={frontRowLimit}
+                    className="cursor-pointer p-2 w-27 text-sm border border-wood-200 bg-white rounded-lg"
+                    onChange={(e) => setFrontRowLimit(Number(e.target.value))}
+                  >
+                    <option value={1}>1列目まで</option>
+                    <option value={2}>2列目まで</option>
+                    <option value={3}>3列目まで</option>
+                  </select>
+                  に座ります。
+                </li>
+                <li className="text-sm">3. NG設定は、NG相手と前後左右を避けて座ります。</li>
+              </ul>
+            </div>
           </div>
           <AddStudentTabs />
 
+          <p className="text-wood-500 text-sm mt-3">
+            現在の人数: 合計 {students.length}人（男子{' '}
+            {students.filter((s) => s.gender === 'boy').length}人、女子{' '}
+            {students.filter((s) => s.gender === 'girl').length}人）
+          </p>
           <div
             className={`flex-1 overflow-y-auto pr-2 space-y-3 ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
           >
