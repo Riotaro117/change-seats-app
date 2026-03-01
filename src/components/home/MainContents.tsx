@@ -30,6 +30,7 @@ const MainContents: React.FC<MainContentsProps> = ({
   onResizeCols,
 }) => {
   const { students } = useStudentsStore();
+  const [frontRowLimit, setFrontRowLimit] = useState(2);
   // 現在選択している座席のid
   const [isSelectedSeatId, setIsSelectedSeatId] = useState<string | null>(null);
   // 生徒に高速アクセスするために、mapの作成
@@ -80,7 +81,7 @@ const MainContents: React.FC<MainContentsProps> = ({
     const rows = Math.ceil(totalSeats / cols);
     try {
       // 新しい座席を制約を元にして定義する
-      const newSeats = generateSeatingChart(seats, rows, cols, students);
+      const newSeats = generateSeatingChart(seats, rows, cols, students, frontRowLimit);
       // 総座席数より、生徒が座っている座席が少ない場合
       if (newSeats.length < totalSeats) {
         // 生徒が座っていない座席に繰り返し処理でseatのstudentIdにnullを入れていく
@@ -115,6 +116,7 @@ const MainContents: React.FC<MainContentsProps> = ({
         onSeatClick={handleSeatClick}
         onResizeSeats={onResizeSeats}
         onResizeCols={onResizeCols}
+        frontRowLimit={frontRowLimit}
       />
       {/* 座席設定モード */}
       <Settings
@@ -126,7 +128,7 @@ const MainContents: React.FC<MainContentsProps> = ({
         setSeats={setSeats}
       />
       {/* 生徒名簿モード */}
-      <StudentsManager />
+      <StudentsManager frontRowLimit={frontRowLimit} setFrontRowLimit={setFrontRowLimit} />
       {/* 履歴モード */}
       <History setSeats={setSeats} setCols={setCols} setTotalSeats={setTotalSeats} />
     </main>

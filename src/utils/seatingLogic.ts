@@ -26,6 +26,7 @@ function countHardConflicts(
   studentsMap: Map<string, Student>, // Mapを使うとfindせず高速アクセス可能
   rows: number,
   cols: number,
+  frontRowLimit: number,
 ): number {
   // スコアの設定
   let conflicts = 0;
@@ -42,7 +43,7 @@ function countHardConflicts(
     const c = idx % cols;
 
     // 1. 視力チェック、違反なら加点
-    const FRONT_ROWS = 2;
+    const FRONT_ROWS = frontRowLimit;
     if (student.needsFrontRow && r >= FRONT_ROWS) {
       conflicts++;
     }
@@ -119,9 +120,8 @@ export const generateSeatingChart = (
   rows: number,
   cols: number,
   students: Student[],
+  frontRowLimit: number,
 ): Seat[] => {
-  // 総座席数
-  // const totalSeats = rows * cols;
   // 席替えで利用できる座席を定義する
   const enabledSeats = seats.filter((seat) => !seat.isDisabled);
   // 1次元配列に戻す
@@ -150,7 +150,7 @@ export const generateSeatingChart = (
       // 使用不可の座席であればスキップする
       if (!enabledSet.has(idx)) continue;
 
-      if (r < 2) {
+      if (r < frontRowLimit) {
         // 0,1列目に優先座席を入れて、あとは通常席を入れる
         frontRowIndices.push(idx);
       } else {
@@ -204,7 +204,7 @@ export const generateSeatingChart = (
     });
 
     // 制約の重さをそれぞれ定義する
-    const hardConflicts = countHardConflicts(assignments, studentMap, rows, cols);
+    const hardConflicts = countHardConflicts(assignments, studentMap, rows, cols, frontRowLimit);
     const genderConflicts = countGenderConflicts(assignments, studentMap, rows, cols);
     // 厳しい制約には1000倍の採点をする
     const score = hardConflicts * 1000 + genderConflicts;
