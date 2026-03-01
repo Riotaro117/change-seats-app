@@ -41,9 +41,10 @@ const Classroom: React.FC<ClassroomProps> = ({
   const { currentUser } = useCurrentUserStore();
   const { setLayouts } = useLayoutsStore();
   const navigate = useNavigate();
+  const seatMap = new Map(seats.map((s) => [`${s.row}-${s.col}`, s]));
 
   // この席に座っている生徒はルール違反をしているかどうかをbooleanで返す
-  const getConflictWarning = (seat: Seat, frontRowLimit: number): boolean => {
+  const getConflictWarning = (seat: Seat, totalSeats: number, frontRowLimit: number): boolean => {
     // 座席に生徒がいないならfalseで終了
     if (!seat.studentId) return false;
     // 生徒を定義する
@@ -51,14 +52,19 @@ const Classroom: React.FC<ClassroomProps> = ({
     // 生徒がいないならfalseで終了
     if (!student) return false;
 
+    const rows = Math.ceil(totalSeats / cols);
+
     // 1.相性が悪いチェック
     // for-ofで上下左右一つずつループさせて確かめる
     for (const offset of ADJACENT_OFFSETS) {
       // 隣の行と列を定義する
       const neighborRow = seat.row + offset.r;
       const neighborCol = seat.col + offset.c;
+      if (neighborRow < 0 || neighborRow >= rows) continue;
+      if (neighborCol < 0 || neighborCol >= cols) continue;
+
       // ADJACENT_OFFSETSに基づいた隣の席を見つける
-      const neighborSeat = seats.find((s) => s.row === neighborRow && s.col === neighborCol);
+      const neighborSeat = seatMap.get(`${neighborRow}-${neighborCol}`);
       // 隣の席があり、隣の席に生徒が座っているなら
       if (neighborSeat && neighborSeat.studentId) {
         // 隣の席の生徒が相性悪い配列の中にあるなら違反報告
@@ -172,7 +178,7 @@ const Classroom: React.FC<ClassroomProps> = ({
               // 選択している座席のidとseatのidが一致している状態を定義
               const isSelected = isSelectedSeatId === seat.id;
               // seatingLogicを元に制約違反があるかどうか
-              const hasConflict = getConflictWarning(seat,frontRowLimit);
+              const hasConflict = getConflictWarning(seat, totalSeats, frontRowLimit);
 
               // 文字の色を定義
               let textColor = 'text-wood-900';
