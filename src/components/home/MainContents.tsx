@@ -116,6 +116,7 @@ const MainContents: React.FC<MainContentsProps> = ({
         onSeatClick={handleSeatClick}
         onResizeSeats={onResizeSeats}
         onResizeCols={onResizeCols}
+        frontRowLimit={frontRowLimit}
       />
       {/* 座席設定モード */}
       <Settings
