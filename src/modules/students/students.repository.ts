@@ -31,7 +31,7 @@ export const studentsRepository = {
       .from('students')
       .select('*')
       .eq('user_id', userId)
-      .order('name', { ascending: true });
+      .order('created_at', { ascending: true });
     if (!data || error) throw new Error(error.message);
 
     const formattedStudents = data.map(formatStudent);
