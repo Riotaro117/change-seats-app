@@ -37,6 +37,7 @@ export const studentsRepository = {
     const formattedStudents = data.map(formatStudent);
     return formattedStudents;
   },
+
   // 生徒の追加 idについてはDBが自動作成するものなので省略している
   async addStudent(userId: string, student: Omit<Student, 'id'>) {
     const { data, error } = await supabase
@@ -53,6 +54,7 @@ export const studentsRepository = {
     if (!data || error) throw new Error(error.message);
     return formatStudent(data);
   },
+
   // 生徒の更新
   async updateStudent(userId: string, student: Student) {
     const { data, error } = await supabase
@@ -71,6 +73,7 @@ export const studentsRepository = {
 
     return formatStudent(data);
   },
+  
   // 生徒の削除
   async deleteStudent(userId: string, student: Student) {
     const { error } = await supabase
