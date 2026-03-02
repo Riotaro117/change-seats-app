@@ -236,7 +236,7 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
                           className="bg-white border border-wood-200"
                           onChange={(e) => setEditingName(e.target.value)}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                               handleUpdateName(student, editingName);
                             }
                           }}
