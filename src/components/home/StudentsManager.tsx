@@ -232,6 +232,7 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
                     {editingNameId === student.id ? (
                       <div className="flex items-center gap-2">
                         <input
+                          maxLength={20}
                           value={editingName}
                           className="bg-white border border-wood-200"
                           onChange={(e) => setEditingName(e.target.value)}
