@@ -3,6 +3,8 @@ import {
   Check,
   CircleUserRound,
   Glasses,
+  Pencil,
+  Save,
   Trash2,
   User,
   Users,
@@ -32,10 +34,27 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
   const { isLoading, setIsLoading } = useAuth();
   // 編集しているidの状態
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingNameId, setEditingNameId] = useState<string | null>(null);
+
+  const [editingName, setEditingName] = useState('');
 
   const navigate = useNavigate();
 
-  // 生徒の情報を更新する処理
+  // 生徒の名前を更新する処理
+  const handleUpdateName = async (student: Student, editingName: string) => {
+    if (!editingName.trim()) return;
+    try {
+      const updateStudent = { ...student, name: editingName };
+      const data = await studentsRepository.updateStudent(currentUser!.id, updateStudent);
+      setStudents((prev) => prev.map((s) => (s.id === student.id ? data : s)));
+      setEditingNameId(null);
+    } catch (error) {
+      console.error(error);
+      alert('更新に失敗しました');
+    }
+  };
+
+  // 生徒の性別を更新する処理
   const handleUpdateGender = async (student: Student, gender: Student['gender']) => {
     try {
       // genderのみ書き換えた生徒を定義する
@@ -49,7 +68,7 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
     }
   };
 
-  // propのオンオフを更新する関数
+  // 視力のオンオフを更新する関数
   const handleToggleProperty = async (student: Student, props: 'needsFrontRow') => {
     try {
       // キーのみ更新する生徒を定義する→ブラケット方式で動的にキーを取得する
@@ -179,7 +198,7 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
             <p className="px-8 text-wood-800 font-bold text-md bg-white rounded-lg">
               現在の人数: 計 {students.length}名
             </p>
-            <div className='flex gap-2 items-center'>
+            <div className="flex gap-2 items-center">
               <span className="p-1 text-sm bg-blue-100 text-blue-800 rounded-lg">
                 男子: {students.filter((s) => s.gender === 'boy').length}名
               </span>
@@ -210,7 +229,43 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
                     <User className="w-6 h-6" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-lg text-wood-900">{student.name}</span>
+                    {editingNameId === student.id ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          maxLength={20}
+                          value={editingName}
+                          className="bg-white border border-wood-200"
+                          onChange={(e) => setEditingName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                              handleUpdateName(student, editingName);
+                            }
+                          }}
+                        />
+                        <button
+                          className="cursor-pointer text-gray-400 hover:text-blue-700"
+                          onClick={() => handleUpdateName(student, editingName)}
+                          disabled={isLoading}
+                        >
+                          <Save className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-lg text-wood-900">{student.name}</span>
+                        <button
+                          className="cursor-pointer text-gray-400 hover:text-red-700"
+                          onClick={() => {
+                            setEditingNameId(student.id);
+                            setEditingName(student.name);
+                          }}
+                          disabled={isLoading}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+
                     <div className="flex gap-2 sm:hidden mt-1">
                       <button
                         onClick={() => handleUpdateGender(student, 'boy')}

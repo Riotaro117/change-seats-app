@@ -47,7 +47,11 @@ const InputStudent: React.FC = () => {
         onChange={(e) => setNewStudentName(e.target.value)}
         placeholder="新しい生徒の名前"
         className="flex-1 px-4 py-3 rounded-xl border-2 border-wood-200 focus:border-wood-400 focus:outline-none bg-white"
-        onKeyDown={(e) => e.key === 'Enter' && handleAddStudent()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+            handleAddStudent();
+          }
+        }}
       />
       <div className="flex gap-2">
         <button

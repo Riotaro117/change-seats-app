@@ -1,5 +1,28 @@
+import type { Database } from '../../../database.types';
 import { supabase } from '../../lib/supabase';
 import type { Student } from '../../type';
+
+// 型ガード
+const isGender = (value: string): value is Student['gender'] =>
+  value === 'boy' || value === 'girl' || value === 'other';
+
+// Json[]をstring[]に変換
+const toStringArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) return [];
+  return value.filter((v): v is string => typeof v === 'string');
+};
+
+// データベースのstudentsテーブルの型を持ってくる
+type StudentRow = Database['public']['Tables']['students']['Row'];
+const formatStudent = (data: StudentRow): Student => {
+  return {
+    id: data.id,
+    name: data.name,
+    gender: isGender(data.gender) ? data.gender : 'other',
+    needsFrontRow: data.needs_front_row ?? false,
+    badChemistryWith: toStringArray(data.bad_chemistry_with),
+  };
+};
 
 export const studentsRepository = {
   // 保存したstudentsの名前を取得する
@@ -8,27 +31,13 @@ export const studentsRepository = {
       .from('students')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: true }); // 作成順で並び替え→名前順の方がいい？
+      .order('created_at', { ascending: true });
     if (!data || error) throw new Error(error.message);
 
-    // genderがどの性別かチェックする関数を作成する
-    const isGender = (value: string): value is Student['gender'] =>
-      value === 'boy' || value === 'girl' || value === 'other';
-
-    // DBの項目のsnake_case→appの項目のcamelcaseへ変換
-    const formattedStudents: Student[] = (data || []).map((s) => ({
-      id: s.id,
-      name: s.name,
-      gender: isGender(s.gender) ? s.gender : 'other',
-      needsFrontRow: s.needs_front_row ?? false,
-      // DBの項目が配列かどうかチェックする。falseなら空配列
-      badChemistryWith: Array.isArray(s.bad_chemistry_with)
-        ? (s.bad_chemistry_with as string[])
-        : [],
-    }));
-
+    const formattedStudents = data.map(formatStudent);
     return formattedStudents;
   },
+
   // 生徒の追加 idについてはDBが自動作成するものなので省略している
   async addStudent(userId: string, student: Omit<Student, 'id'>) {
     const { data, error } = await supabase
@@ -43,8 +52,9 @@ export const studentsRepository = {
       .select()
       .single();
     if (!data || error) throw new Error(error.message);
-    return data;
+    return formatStudent(data);
   },
+
   // 生徒の更新
   async updateStudent(userId: string, student: Student) {
     const { data, error } = await supabase
@@ -60,8 +70,10 @@ export const studentsRepository = {
       .select()
       .single();
     if (!data || error) throw new Error(error.message);
-    return data;
+
+    return formatStudent(data);
   },
+  
   // 生徒の削除
   async deleteStudent(userId: string, student: Student) {
     const { error } = await supabase
