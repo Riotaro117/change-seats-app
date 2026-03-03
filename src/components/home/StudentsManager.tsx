@@ -4,6 +4,7 @@ import {
   CircleUserRound,
   Glasses,
   Pencil,
+  Save,
   Trash2,
   User,
   Users,
@@ -46,11 +47,10 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
       const updateStudent = { ...student, name: editingName };
       const data = await studentsRepository.updateStudent(currentUser!.id, updateStudent);
       setStudents((prev) => prev.map((s) => (s.id === student.id ? data : s)));
+      setEditingNameId(null);
     } catch (error) {
       console.error(error);
       alert('更新に失敗しました');
-    } finally {
-      setEditingNameId(null);
     }
   };
 
@@ -229,8 +229,8 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
                     <User className="w-6 h-6" />
                   </div>
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      {editingNameId === student.id ? (
+                    {editingNameId === student.id ? (
+                      <div className="flex items-center gap-2">
                         <input
                           value={editingName}
                           className="bg-white border border-wood-200"
@@ -241,18 +241,30 @@ const StudentsManager: React.FC<StudentManagerProps> = ({ frontRowLimit, setFron
                             }
                           }}
                         />
-                      ) : (
+                        <button
+                          className="cursor-pointer text-gray-400 hover:text-blue-700"
+                          onClick={() => handleUpdateName(student, editingName)}
+                          disabled={isLoading}
+                        >
+                          <Save className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
                         <span className="font-bold text-lg text-wood-900">{student.name}</span>
-                      )}
-                      <button
-                        onClick={() => {
-                          setEditingNameId(student.id);
-                          setEditingName(student.name);
-                        }}
-                      >
-                        <Pencil className="cursor-pointer w-4 h-4" />
-                      </button>
-                    </div>
+                        <button
+                          className="cursor-pointer text-gray-400 hover:text-red-700"
+                          onClick={() => {
+                            setEditingNameId(student.id);
+                            setEditingName(student.name);
+                          }}
+                          disabled={isLoading}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+
                     <div className="flex gap-2 sm:hidden mt-1">
                       <button
                         onClick={() => handleUpdateGender(student, 'boy')}
