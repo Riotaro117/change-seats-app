@@ -49,7 +49,7 @@ const Update: React.FC<UpdateProps> = ({ setIsModal }) => {
         </div>
         {updatedHistory.map((h) => {
           return (
-            <div className="mt-5 text-wood-500 flex flex-col gap-2">
+            <div key={h.version} className="mt-5 text-wood-500 flex flex-col gap-2">
               <span className="p-2 bg-lime-600 rounded-lg text-wood-100">
                 v{h.version} <span className="text-sm">[{h.date}更新]</span>
               </span>
