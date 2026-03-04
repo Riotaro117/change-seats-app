@@ -25,8 +25,8 @@ const updatedHistory = [
 
 const Update: React.FC<UpdateProps> = ({ setIsModal }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4 text-wood-800">
-      <div className="max-w-6xl mx-auto bg-white rounded-3xl p-6 shadow-xl border-4 border-wood-200 min-h-[500px] flex flex-col">
+    <div className="min-h-screen flex items-center justify-center  p-4 text-wood-800">
+      <div className="  bg-white rounded-3xl p-6 shadow-xl  flex flex-col">
         <div className="flex justify-between items-center mb-6 shrink-0">
           <div>
             <h2 className="text-2xl font-bold font-serif flex items-center gap-2">
@@ -50,10 +50,10 @@ const Update: React.FC<UpdateProps> = ({ setIsModal }) => {
         {updatedHistory.map((h) => {
           return (
             <div key={h.version} className="mt-5 text-wood-500 flex flex-col gap-2">
-              <span className="p-2 bg-lime-600 rounded-lg text-wood-100">
+              <span className="p-3 bg-lime-600 rounded-lg text-wood-100 text-left">
                 v{h.version} <span className="text-sm">[{h.date}更新]</span>
               </span>
-              <p className="text-wood-800">{h.content}</p>
+              <p className="text-wood-800 text-left">{h.content}</p>
             </div>
           );
         })}
