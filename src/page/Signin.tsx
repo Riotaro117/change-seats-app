@@ -34,12 +34,10 @@ const Signin = () => {
     }
   };
 
-  return isModal ? (
-    <Update setIsModal={setIsModal} />
-  ) : (
+  return (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border-4 border-wood-200 text-center">
-        <div className="w-70 h-70 mx-auto">
+        <div className="w-50 h-50 mx-auto sm:w-70 sm:h-70">
           <img src={iconSeatTree} alt="Seat Tree" />
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
@@ -51,6 +49,11 @@ const Signin = () => {
         >
           v 1.4.0 更新履歴
         </button>
+        {isModal && (
+          <div className="fixed inset-0 bg-black/40 flex-1 overflow-x-auto z-50">
+            <Update setIsModal={setIsModal} />
+          </div>
+        )}
         <form
           onSubmit={(e) => {
             e.preventDefault();
