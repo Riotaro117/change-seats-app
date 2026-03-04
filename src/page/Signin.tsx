@@ -3,11 +3,13 @@ import Button from '../components/ui/Button';
 import { authRepository } from '../modules/auth/auth.repository';
 import iconSeatTree from '../components/assets/icon_seat_tree.webp';
 import { useAuth } from '../contexts/useAuth';
+import Update from '../components/layout/Update';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { isLoading, setIsLoading } = useAuth();
+  const [isModal, setIsModal] = useState(false);
 
   const signin = async () => {
     try {
@@ -32,7 +34,9 @@ const Signin = () => {
     }
   };
 
-  return (
+  return isModal ? (
+    <Update setIsModal={setIsModal} />
+  ) : (
     <div className="min-h-screen flex items-center justify-center bg-wood-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border-4 border-wood-200 text-center">
         <div className="w-70 h-70 mx-auto">
@@ -40,7 +44,13 @@ const Signin = () => {
         </div>
         <h1 className="text-3xl font-bold text-wood-800 font-serif mb-2">Seat Tree</h1>
         <p className="text-wood-500 mb-2 font-serif">-配慮できる席替えアプリ-</p>
-        <p className="text-wood-500 mb-8 font-serif">v1.3.0</p>
+        <button
+          disabled={isLoading}
+          className="mb-8 p-2 cursor-pointer bg-wood-600 text-wood-100 rounded-lg hover:bg-wood-500  font-serif"
+          onClick={() => setIsModal(true)}
+        >
+          v 1.4.0 更新履歴
+        </button>
         <form
           onSubmit={(e) => {
             e.preventDefault();
