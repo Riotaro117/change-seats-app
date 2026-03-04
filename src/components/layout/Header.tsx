@@ -42,7 +42,7 @@ const Header: React.FC = () => {
               ) : (
                 <p
                   onClick={updateUser}
-                  className="bg-red-400 rounded-lg text-sm font-bold font-serif text-center hover:bg-red-600"
+                  className="px-1 bg-red-400 rounded-lg text-sm font-bold font-serif text-center hover:bg-red-600"
                 >
                   ユーザー登録はこちらから！！
                 </p>
