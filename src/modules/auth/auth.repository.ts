@@ -54,6 +54,13 @@ export const authRepository = {
     return data;
   },
 
+  // 現在ログインしているユーザーを取得
+  async getCurrentUser() {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) throw new Error(error.message);
+    return data.user;
+  },
+
   // ログイン、ログアウト、トークン更新などのリアルタイム変化を追従
   stateChange(onChange: (user: User | null) => void) {
     const {
