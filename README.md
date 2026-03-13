@@ -1,155 +1,89 @@
-# 座席配置変更アプリ (Change Seats App)
+# 🪑 座席配置変更アプリ (Change Seats App)
 
-教室の座席配置を簡単に管理・変更できるWebアプリケーションです。生徒の座席をランダムに配置したり、手動で入れ替えたりできます。
+教職員が直感的に教室の座席配置を作成、管理するためのWebアプリケーションです。クリックによる簡易な入れ替えから、ワンクリックでのランダム配置まで、面倒な座席の運用を大幅に効率化します。
 
-## 主な機能
+## ✨ 主な機能
 
-- **座席配置管理**: 教室の座席をグリッド形式で表示・管理
-- **ランダム配置**: 生徒の座席をランダムに配置
-- **座席交換**: ドラッグ&ドロップで座席を交換
-- **生徒管理**: 生徒情報の登録・編集・削除
-- **履歴管理**: 過去の座席配置を記録
-- **印刷機能**: 座席配置を印刷
-- **ユーザー認証**: メール/パスワード認証
-- **設定画面**: アプリケーション設定
+- **座席の管理・編集**: 実際の教室を模したグリッドUIで座席を配置
+- **ランダムシャッフル機能**: ワンクリックで生徒の座席をランダムに再配置
+- **クリックによる座席の移動**: 任意の座席をクリックすることで入れ替え
+- **生徒管理**: アプリ内で生徒情報を一元管理（登録・編集・削除）
+- **データ連携**: `xlsx` (SheetJS) を用いた名簿データのシームレスな入出力機能に対応
+- **印刷サポート**: 完成した座席表を美しいレイアウトのままプリンタで印刷・PDF出力
+- **セキュアな認証**: ユーザー本登録、一時登録時の情報更新などをルートベースで堅牢に制御 (Supabase Auth)
+- **モダンで直感的なUI**: Lucide ReactアイコンとTailwind CSSによる美しくレスポンシブなデザイン
 
-## 技術スタック
+## 🛠 技術スタック
 
-| 技術           | バージョン |
-| -------------- | ---------- |
-| React          | 19.2.0     |
-| TypeScript     | 5.9.3      |
-| Vite           | 7.2.4      |
-| React Router   | 7.12.0     |
-| Tailwind CSS   | 4.1.18     |
-| Supabase       | 2.93.3     |
-| Jotai          | 2.17.0     |
-| React to Print | 3.2.0      |
+| カテゴリ | 技術 |
+| --- | --- |
+| **Frontend Framework** | [React 19](https://react.dev/) / [Vite 7](https://vitejs.dev/) |
+| **Routing** | [React Router 7](https://reactrouter.com/) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) |
+| **State Management** | [Jotai](https://jotai.org/) |
+| **Backend / Database** | [Supabase](https://supabase.com/) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+| **Utility (Print)** | [react-to-print](https://github.com/gregnb/react-to-print) |
+| **Utility (Excel)** | [xlsx (SheetJS)](https://sheetjs.com/) |
 
-## インストール
+## 🚀 環境構築と起動
 
-### 前提条件
+リポジトリを適当なディレクトリにクローン後、以下の手順でローカル環境を構築してください。
 
-- Node.js 18以上
-- npm または yarn
+### 1. 依存パッケージのインストール
 
-### セットアップ
+Node.js環境 (推奨 18.x以上) が整っていることを確認し、依存パッケージをインストールします。
 
 ```bash
-# リポジトリをクローン
-git clone <repository-url>
-
-# ディレクトリに移動
-cd change-seats-app
-
-# 依存関係をインストール
 npm install
 ```
 
-### 環境変数の設定
+### 2. 環境変数の設定
 
-`.env.local` ファイルを作成して、Supabaseの認証情報を設定してください：
+プロジェクトのルートディレクトリに `.env.local` ファイルを作成し、ご自身の Supabase プロジェクトの資格情報を設定してください。これらの値は Supabase ダッシュボードの「Project Settings > API」から取得できます。
 
-```
+```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-## 実行
-
-### 開発モード
+### 3. 開発サーバーの起動
 
 ```bash
 npm run dev
 ```
 
-アプリはブラウザで `http://localhost:5173` (Viteのデフォルトポート) で起動します。
+ターミナルに表示されたローカルURL（通常は `http://localhost:5173` ）にブラウザでアクセスすると、アプリケーションが起動します。
 
-### ビルド
+## 📁 ディレクトリ構成の概要
 
-```bash
-npm run build
-```
+アプリケーションにおける関心の分離（Separation of Concerns）を明確にするため、以下のフロントエンド構造を採用しています。
 
-本番環境用にアプリをビルドします。
-
-### プレビュー
-
-```bash
-npm run preview
-```
-
-ビルド後のアプリをローカルプレビューします。
-
-### リント
-
-```bash
-npm run lint
-```
-
-コードの品質をチェックします。
-
-## プロジェクト構造
-
-```
+```text
 src/
-├── components/          # Reactコンポーネント
-│   ├── home/           # ホーム画面のコンポーネント
-│   ├── layout/         # レイアウトコンポーネント
-│   └── ui/             # UI部品
-├── contexts/           # React Context
-├── lib/                # ライブラリ設定（Supabase等）
-├── modules/            # ビジネスロジック
-│   ├── auth/           # 認証関連
-│   ├── layouts/        # 座席配置関連
-│   ├── students/       # 生徒管理
-│   └── viewMode/       # ビューモード
-├── page/               # ページコンポーネント
-├── Routes/             # ルート定義
-├── utils/              # ユーティリティ関数
-├── App.tsx             # メインアプリケーション
-├── main.tsx            # エントリーポイント
-└── type.ts             # 型定義
+├── components/          # 再利用可能な共通UIコンポーネント
+├── modules/             # ドメインロジックごとの機能分割 (auth, layouts, students 等)
+├── page/                # ページ単位のルーティング用コンポーネント (Home, Signin 等)
+├── Routes/              # アクセス権限に基づくルーティングおよび保護機能 (Auth Guards)
+├── contexts/            # React Context (アプリ全体の状態等)
+├── lib/                 # Supabase クライアント等の初期化・外部ライブラリ設定
+├── utils/               # アプリケーション共通のユーティリティ関数
+├── type.ts              # アプリケーション全体の型定義
+└── main.tsx / App.tsx   # Reactのエントリーポイントとルーター設定
 ```
 
-## 使い方
+## 🔒 認証とルーティング
 
-### ユーザー登録・ログイン
+ユーザーの登録状態に応じたきめ細かいアクセス制御が実装されています。これにより、安全なデータ管理を実現しています。
 
-1. `/signup` ページでメールアドレスとパスワードで登録
-2. 登録後、確認ページで完了を待つ
-3. `/signin` ページでログイン
+- **保護されたルート (`ProtectedRoute`)**: 本登録が完了したユーザーのみがアクセス可能なメインの座席管理機能です (`/`)。
+- **仮ユーザー用ルート (`AnonymousOnlyRoute`)**: サインインは完了しているが追加情報の更新が必要な仮登録ユーザー用のページです (`/updateUser`)。
+- **パブリックルート (`PublicOnlyRoute`)**: 未ログインのユーザーがアクセスするための認証・登録関連ページです (`/signin`, `/registered`)。
 
-### 座席配置
+## 📄 ライセンス
 
-1. ホーム画面で教室の座席を確認
-2. 「ランダム配置」ボタンで自動配置、または手動で座席を交換
-3. 座席の印刷が可能
-4. 変更内容は自動的に保存されます
+MIT License
 
-### 生徒管理
+## 🤝 サポート
 
-1. 「生徒管理」メニューから生徒情報を管理
-2. 生徒の追加・編集・削除が可能
-
-## スクリーンショット
-
-（スクリーンショットを追加予定）
-
-## ライセンス
-
-MIT
-
-## サポート
-
-問題が発生した場合は、GitHubのIssuesよりご報告ください。
-
-## 開発者向け情報
-
-### ESLint設定のカスタマイズ
-
-プロダクション環境では、ESLintの設定を強化することをお勧めします。`eslint.config.js` を編集して、型チェック対応のルールを有効にしてください。
-
-### React Compilerの有効化
-
-必要に応じてReact Compilerを有効化できます。詳細は [React公式ドキュメント](https://react.dev/learn/react-compiler/installation) をご参照ください。
+バグの報告や機能のご要望は、GitHubのIssuesからお知らせください。
