@@ -47,7 +47,7 @@ const Signin = () => {
           className="mb-8 p-2 cursor-pointer bg-wood-600 text-wood-100 rounded-lg hover:bg-wood-500  font-serif"
           onClick={() => setIsModal(true)}
         >
-          v 1.4.0 更新履歴
+          v 1.5.1 更新履歴
         </button>
         {isModal && (
           <div className="fixed inset-0 bg-black/40 flex-1 overflow-x-auto z-50">

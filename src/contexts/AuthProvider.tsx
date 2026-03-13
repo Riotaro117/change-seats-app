@@ -13,12 +13,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   // 初回の信頼できるユーザーのみ読み込み
   useEffect(() => {
-    // 通信完了が遅れた時のためにコンポーネントが画面に存在している状態
-    let mounted = true;
     // 初期認証が確定したかどうか
     let initialized = false;
     authRepository.getSession().then((user) => {
-      if (!mounted) return;
       setUser(user);
       setIsLoading(false);
       initialized = true;
@@ -28,11 +25,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!initialized) return;
       setUser(user);
     });
+
+    // クリーンアップ useEffectの後処理 監視イベントの解除
     return () => {
-      mounted = false;
-      unSubscribe();
+      unSubscribe?.();
     };
-  }, []);
+  }, [setUser]);
 
   return (
     <AuthContext.Provider value={{ isLoading, setIsLoading }}>{children}</AuthContext.Provider>

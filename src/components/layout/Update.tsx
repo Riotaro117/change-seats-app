@@ -21,6 +21,8 @@ const updatedHistory = [
   { version: '1.2.1', date: '2026.3.2', content: '生徒名簿のUIを改善' },
   { version: '1.3.0', date: '2026.3.3', content: '生徒名簿で名前の変更に対応' },
   { version: '1.4.0', date: '2026.3.5', content: 'アプリの更新履歴を表示できるように対応' },
+  { version: '1.5.0', date: '2026.3.13', content: 'メールで認証ボタンを押した後の挙動を修正' },
+  { version: '1.5.1', date: '2026.3.13', content: '更新履歴のUIを修正' },
 ];
 
 const Update: React.FC<UpdateProps> = ({ setIsModal }) => {
@@ -49,11 +51,13 @@ const Update: React.FC<UpdateProps> = ({ setIsModal }) => {
         </div>
         {updatedHistory.map((h) => {
           return (
-            <div key={h.version} className="mt-5 text-wood-500 flex flex-col gap-2">
+            <div key={h.version} className="mt-5 text-wood-500 flex flex-col items-start gap-2">
               <span className="p-3 bg-lime-600 rounded-lg text-wood-100 text-left">
                 v{h.version} <span className="text-sm">[{h.date}更新]</span>
               </span>
-              <p className="text-wood-800 text-left">{h.content}</p>
+              <p className="text-wood-800 bg-wood-50 p-3 rounded-lg w-full text-left">
+                {h.content}
+              </p>
             </div>
           );
         })}
