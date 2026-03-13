@@ -8,6 +8,7 @@ import UpdateUser from './page/UpdateUser';
 import { AnonymousOnlyRoute } from './Routes/AnonymousOnlyRoute';
 import PublicOnlyRoute from './Routes/PublicOnlyRoute';
 import Registered from './page/Registered';
+import AuthCallback from './page/AuthCallback';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/registered" element={<Registered />} />
         </Route>
+        <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
     </BrowserRouter>
   );
