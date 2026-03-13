@@ -21,6 +21,7 @@ const updatedHistory = [
   { version: '1.2.1', date: '2026.3.2', content: '生徒名簿のUIを改善' },
   { version: '1.3.0', date: '2026.3.3', content: '生徒名簿で名前の変更に対応' },
   { version: '1.4.0', date: '2026.3.5', content: 'アプリの更新履歴を表示できるように対応' },
+  { version: '1.5.0', date: '2026.3.13', content: 'メールで認証ボタンを押した後の挙動を修正' },
 ];
 
 const Update: React.FC<UpdateProps> = ({ setIsModal }) => {
