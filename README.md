@@ -1,8 +1,9 @@
 # 🪑 はじめに
 
 教員が直感的に教室の座席配置を作成、管理するためのWebアプリケーションです。
+こちらのアプリケーションをNext.jsに書き換え、さらに機能を追加し、コードを見直したものが以下のリンクです。
 
-https://change-seats-app.vercel.app
+https://github.com/Riotaro117/seat-tree-next
 
 ご利用いただくことでのトラブル等は自己責任でお願いします。
 
